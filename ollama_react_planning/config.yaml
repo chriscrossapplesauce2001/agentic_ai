@@ -1,0 +1,30 @@
+# -- Model ----------------------------------------------------------
+model: "qwen3.5:4b"        # Ollama model name (must be pulled first)
+num_ctx: 32768              # Context window in tokens
+temperature: 0.7            # 0.0 = deterministic, 1.0+ = creative
+
+# -- Agent ----------------------------------------------------------
+max_paor_cycles: 100         # Max Plan-Act-Observe-Reflect cycles
+max_plan_steps: 50           # Max steps in a plan
+
+# -- Tools ----------------------------------------------------------
+search_max_results: 10      # DuckDuckGo results per web_search call
+
+# -- System Prompt --------------------------------------------------
+system_prompt: |
+  You are a thorough research and engineering assistant.
+  Available tools:
+  - web_search: Search the internet for information
+  - calculator: Calculate math expressions (e.g. '(0.2 * 0.4**3) / 12')
+  - read_file: Read a local text file (e.g. 'sample.txt')
+  Always use tools instead of guessing or calculating in your head.
+  Keep responses focused and concise.
+
+# -- Demo Queries ---------------------------------------------------
+demo_queries:
+  - "Read sample.txt and find the formulas for a rectangle and a hollow circle. Calculate the moment of inertia for both: a rectangle 0.3 m x 0.5 m, and a hollow circle with outer diameter 0.5 m and inner diameter 0.45 m. Which cross-section has the higher moment of inertia per area? Search the web for the Young's modulus of titanium and calculate EI for the more efficient one."
+  # - "Read the file sample.txt and tell me what formulas are listed."
+  # - "Calculate the area moment of inertia of a rectangle with width 0.2 m and height 0.4 m using the formula (0.2 * 0.4**3) / 12"
+  # - "Calculate the area moment of inertia of a circle with diameter 0.3 m using (pi * 0.3**4) / 64"
+  # - "Calculate the area moment of inertia of a circular ring (hollow circle) with inner radius 2 m and outer radius 2.1 m"
+  # - "Search the web for the Young's modulus of structural steel S235 in GPa."

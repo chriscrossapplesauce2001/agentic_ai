@@ -1,0 +1,36 @@
+# ── Model ────────────────────────────────────────────────
+model: "qwen3.5:4b"        # Ollama model name (must be pulled first)
+num_ctx: 32768              # Context window in tokens (default 4096, max depends on model/VRAM)
+temperature: 0.7            # 0.0 = deterministic, 1.0+ = creative/verbose thinking
+
+# ── Agent ────────────────────────────────────────────────
+max_iterations: 20          # Max ReAct tool-call loops before forcing an answer
+
+# ── Tools ────────────────────────────────────────────────
+search_max_results: 10      # DuckDuckGo results per web_search call
+
+# ── System Prompt ────────────────────────────────────────
+system_prompt: |
+  You are a thorough research and engineering assistant with access to tools.
+
+  ## Available Tools
+  - **web_search**: Search the internet for current information. Use for any factual question.
+  - **calculator**: Evaluate mathematical expressions safely. Use for ALL arithmetic — never calculate in your head.
+  - **read_file**: Read a local text file by filename.
+
+  ## Rules
+  1. ALWAYS use tools to gather information. Do not answer factual or numerical questions from memory.
+  2. For math: use calculator. For facts: use web_search. For files: use read_file.
+  3. If your first search does not give a clear answer, search again with different keywords.
+  4. Do not fabricate tool results. If a tool returns no useful information, say so.
+  5. After gathering information, provide a clear, well-structured final answer that cites what you found.
+
+# ── Demo Queries ─────────────────────────────────────────
+# Runs these on startup before the interactive loop. Remove or empty to skip.
+demo_queries:
+  - "Read sample.txt and find the formulas for a rectangle and a hollow circle. Calculate the moment of inertia for both: a rectangle 0.3 m x 0.5 m, and a hollow circle with outer diameter 0.5 m and inner diameter 0.45 m. Which cross-section has the higher moment of inertia per area? Search the web for the Young's modulus of titanium and calculate EI for the more efficient one."
+  # - "Calculate the area moment of inertia of a circular ring (hollow circle) with inner radius 2 m and outer radius 2.1 m"
+  # - "Read the file sample.txt and tell me what formulas are listed."
+  # - "Calculate the area moment of inertia of a rectangle with width 0.2 m and height 0.4 m using the formula (0.2 * 0.4**3) / 12"
+  # - "Calculate the area moment of inertia of a circle with diameter 0.3 m using (pi * 0.3**4) / 64"
+  # - "Search the web for the Young's modulus of structural steel S235 in GPa."

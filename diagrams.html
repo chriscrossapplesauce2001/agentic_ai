@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; margin: 40px; background: white; }
+  .container { display: flex; gap: 60px; align-items: flex-start; }
+  .box { flex: 1; }
+  h2 { margin-bottom: 8px; }
+  p { color: #555; font-size: 14px; margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="box">
+    <h2>ReAct (flach)</h2>
+    <p>LLM entscheidet frei — kein Plan, kein Tracking</p>
+    <pre class="mermaid">
+flowchart TD
+    A["User-Frage"] --> B{"LLM: Tool nötig?"}
+    B -- ja --> C["Tool ausführen"]
+    C --> B
+    B -- nein --> D["Antwort ausgeben"]
+
+    style A fill:#e3f2fd,stroke:#1565c0
+    style B fill:#fff3e0,stroke:#e65100
+    style C fill:#fce4ec,stroke:#c62828
+    style D fill:#e8f5e9,stroke:#2e7d32
+    </pre>
+  </div>
+  <div class="box">
+    <h2>PAOR (strukturiert)</h2>
+    <p>Feste Phasen, ein Schritt pro Zyklus, Checkliste trackt Fortschritt</p>
+    <pre class="mermaid">
+flowchart TD
+    A["User-Frage"] --> P["PLAN\nLLM erstellt\nnummerierten Plan"]
+    P --> ACT["ACT\nLLM führt genau\nEINEN Schritt aus"]
+    ACT --> OBS["OBSERVE\nPython führt\nTool aus"]
+    OBS --> REF{"REFLECT\nLLM prüft Checkliste"}
+    REF -- "noch [pending]" --> ACT
+    REF -- "alle [done]" --> FA["FINAL ANSWER"]
+    REF -- "Plan ändern" --> P
+
+    style A fill:#e3f2fd,stroke:#1565c0
+    style P fill:#e8eaf6,stroke:#283593
+    style ACT fill:#fff3e0,stroke:#e65100
+    style OBS fill:#fce4ec,stroke:#c62828
+    style REF fill:#f3e5f5,stroke:#6a1b9a
+    style FA fill:#e8f5e9,stroke:#2e7d32
+    </pre>
+  </div>
+</div>
+<script>mermaid.initialize({startOnLoad: true, theme: 'base'});</script>
+</body>
+</html>

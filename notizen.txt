@@ -1,0 +1,102 @@
+Zoom link:
+https://app.zoom.us/wc/2963367976/join?ref_from=launch&fromPWA=1
+
+Agentic ai Vorlesungen angucken.
+
+- Basics von renommierten unis
+- Literatur zusammentragenss
+
+26.02.2026 meeting
+
+- Agenten in blick auf Systeme
+- mehrere Agenten die kommunizieren
+- Jedes Teilsystem hat einen Agenten
+- lang graph, lang chain, crew ai mal einarbeiten !!!
+- explainable ai für autonome schiffahrt kontakt
+- MetaGPT zentraler teil
+- MCP
+- agentic coding
+- Anwendung für Labor, Beispiele sammeln. interagieren von Agenten beobachten. Labor mit lang chain z.B.
+
+17.03.2026 meeting — Fortschrittsupdate
+
+Überblick:
+Ziel war es, Agentic AI praktisch zu verstehen — wie funktionieren LLM-Agenten
+unter der Haube? Dazu habe ich dasselbe Problem (einen ReAct-Agenten der Tools
+benutzt: Websuche, Rechner, Dateilesen) mit zwei Ansätzen gebaut:
+  (a) LangChain/LangGraph — Framework, wenig eigener Code, viel Abstraktion
+  (b) Eigenes Programmieren mit rohem Ollama SDK — mehr Code, volle Transparenz
+
+Kernfrage: Braucht man Frameworks oder reicht eigener Code? Was ist didaktisch besser?
+
+Ergebnis: Eigenes Programmieren ist didaktisch klar überlegen. Ein "Agent" ist im Kern
+nur ~50 Zeilen Python Control-Flow + ein LLM als Text-Completion-Funktion. Frameworks
+wie LangChain verstecken genau das was man verstehen muss. Darüber hinaus hat LangChain
+einen Bug beim Thinking-Modus in Multi-Turn-Gesprächen, den man im rohen SDK umgeht.
+
+Stand: 5 lauffähige Prototypen, Benchmark ReAct vs PAOR durchgeführt, 31 Quellen
+Literatur gesammelt und 7 Kernquellen für die Vorlesung ausgewählt.
+
+---
+
+Details:
+
+Was wurde gebaut (5 Sub-Projekte, aufsteigend nach Komplexität):
+1. langchain_simple — Streaming mit/ohne Thinking-Modus (LangChain, qwen3.5:4b)
+2. langchain_react — ReAct-Agent mit create_react_agent, 3 Tools, REPL (LangGraph, qwen3.5:0.8b)
+3. langgraph_basics — Hand-gebauter ReAct mit StateGraph + Multi-Agent Supervisor (Jupyter, qwen3.5:0.8b)
+4. ollama_react — ReAct-Agent mit rohem Ollama SDK, ohne LangChain (qwen3.5:4b)
+5. ollama_react_planning — PAOR-Agent: Plan→Act→Observe→Reflect, transiente Prompts (qwen3.5:4b)
+
+Benchmark: ReAct bestanden (10 Schritte, korrekt), PAOR durchgefallen (3 Zyklen, abgebrochen).
+4B-Modell zu klein für PAOR-Overhead. Details in benchmark_report.md
+
+Hardware:
+- qwen3.5:4b qualitativ gut aber LANGSAM auf lokaler Hardware
+- DGX Spark wäre hilfreich, sonst API-Calls (kosten Geld)
+- Thinking-Modus in LangChain kaputt bei Multi-Turn → rohes ollama.chat() nötig
+
+Literatur:
+- 31 Quellen gesammelt (Agentic_AI_Literatur_Feb2026.md)
+- 7 Kernquellen für Vorlesung ausgewählt (Quellen_7_Agentic_AI.md)
+
+LangChain vs eigenes Programmieren — Vergleich aus dem Code:
+
+  Was LangChain/LangGraph automatisch macht:
+  - Tool-Definition: @tool Decorator generiert JSON-Schema aus Funktionssignatur (~7 Zeilen/Tool)
+  - Tool-Dispatch: ToolNode ruft automatisch die richtige Funktion auf, fängt Fehler ab
+  - Agent-Loop: create_react_agent() baut den gesamten ReAct-Loop in ~4 Zeilen
+  - State: TypedDict + add_messages Reducer verwaltet Message-History automatisch
+  - Streaming: .stream() liefert strukturierte Chunks pro Node
+  - Fehlerbehandlung: eingebaut, 0 Zeilen eigener Code
+
+  Was man selbst programmieren muss (ohne LangChain):
+  - Tool-Definition: JSON-Schemas von Hand schreiben (~50 Zeilen für 3 Tools), muss mit
+    Funktionssignatur synchron gehalten werden
+  - Tool-Dispatch: Dictionary-Lookup + func(**args) + try/except (~13 Zeilen)
+  - Agent-Loop: while-Schleife mit Abbruchbedingungen selbst schreiben (~57 Zeilen)
+  - State: Einfache Python-Liste, messages.append() von Hand
+  - Streaming: Chunks manuell iterieren, Thinking/Content trennen (~47 Zeilen)
+  - Fehlerbehandlung: try/except selbst schreiben (~8 Zeilen)
+
+  Insgesamt: LangChain ~10 Zeilen vs roh ~150+ Zeilen für den gleichen ReAct-Agent
+
+  ABER — Vorteile des eigenen Programmierens:
+  - Thinking-Modus funktioniert (in LangChain kaputt bei Multi-Turn!)
+  - Volle Kontrolle über jeden Schritt (Retry, Approval-Gates, Custom-Logging)
+  - PAOR lässt sich einfach draufbauen — einfach eine Phase-Funktion hinzufügen
+  - Man sieht das Drahtformat: was das LLM genau empfängt und zurückgibt
+  - Didaktisch: der "Agent" ist nur ~50 Zeilen Python + LLM als Text-Completion-Funktion
+  - Kein Framework-Lock-in, keine versteckten Bugs
+
+  Fazit: Für Lehre → eigenes Programmieren. Für Produktion → LangGraph sinnvoll.
+  Didaktischer Ansatz: erst roh bauen, dann LangGraph zeigen was es abstrahiert.
+  (Ausführlicher Vergleich in ollama_react_planning/README.md)
+
+Offene Punkte:
+- DGX Spark Zugang klären
+- Größere Modelle testen (8B+) für PAOR
+- API-Calls evaluieren (Kosten vs. Geschwindigkeit)
+- Council-Debate Notebook fertigstellen
+- Labor-Anwendung mit Multi-Agent-Interaktion
+- MCP und A2A Protokolle ausprobieren
