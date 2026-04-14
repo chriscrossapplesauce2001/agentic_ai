@@ -11,6 +11,11 @@ cd ~/cwilsch/agentic_ai/nemotron_voice
 uv run pipecat_bots/bot_interleaved_streaming.py -t webrtc
 
 # 3. Open in browser: http://localhost:7860/client
+#    Remote access from laptop: ssh -L 57860:localhost:7860 agentsmith@192.168.178.106
+#    Then open: http://localhost:57860/client
+#    Note: NVIDIA Sync auto-forwards port 7860, so a manual SSH tunnel may conflict.
+#    If "Permission denied" on Windows: check with `netstat -ano | findstr :7860`
+#    and `taskkill /PID <pid> /F` to free the port, then reconnect.
 
 # Stop the bot: Ctrl+C
 # Stop the container:
