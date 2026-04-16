@@ -57,13 +57,13 @@ Dann die `.ipynb` Dateien oeffnen mit:
 - **VS Code / PyCharm**: Datei direkt oeffnen, Kernel **"Lab 01"** auswaehlen
 - **Browser**: `jupyter notebook` ausfuehren
 
-## Aufgaben
+## Exercises
 
-| Aufgabe | Datei | Beschreibung |
-|---------|-------|-------------|
-| Ollama kennenlernen | `aufgabe0/aufgabe0.ipynb` | Rohes `ollama.chat()` verstehen: ohne Tools, mit History, mit Tools, manueller Tool-Roundtrip |
-| ReAct-Agent von Hand (Ollama SDK) | `aufgabe1/aufgabe1.ipynb` | Den ReAct-Loop als `run_agent()` Funktion implementieren (4 TODOs) |
-| ReAct-Agent mit LangChain | `aufgabe2/aufgabe2.ipynb` | Den gleichen Agenten mit LangChain/LangGraph bauen |
+| Exercise | File | Description |
+|----------|------|-------------|
+| Ollama kennenlernen | `exercise0/exercise0.ipynb` | Rohes `ollama.chat()` verstehen: ohne Tools, mit History, mit Tools, manueller Tool-Roundtrip |
+| ReAct-Agent von Hand (Ollama SDK) | `exercise1/exercise1.ipynb` | Den ReAct-Loop als `run_agent()` Funktion implementieren (4 TODOs) |
+| ReAct-Agent mit LangChain | `exercise2/exercise2.ipynb` | Den gleichen Agenten mit LangChain/LangGraph bauen |
 
 ## Test
 
