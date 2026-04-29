@@ -100,3 +100,5 @@ Offene Punkte:
 - Council-Debate Notebook fertigstellen
 - Labor-Anwendung mit Multi-Agent-Interaktion
 - MCP und A2A Protokolle ausprobieren
+- TODO: Unterschiede zwischen MCP, Skills, Tools und Subagents herausarbeiten
+  (Abgrenzung, Einsatzzweck, Beispiele, wann was verwenden)
