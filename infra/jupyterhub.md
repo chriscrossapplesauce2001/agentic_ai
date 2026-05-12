@@ -167,12 +167,36 @@ Before sharing the link with students:
 5. Open the public trycloudflare URL on a device off the Spark's network (phone on cellular is easiest). Repeat step 3 against the public URL.
 6. Open a second browser / incognito, sign up as a different username, run the notebook in parallel. Both should respond; `ollama ps` should still show one loaded model.
 
+## User management
+
+**Default behavior:** anyone with the magic link picks a username + password on the login page and gets an account on the spot (`FirstUseAuthenticator` + `create_users: true`). No pre-provisioning needed — just share the link.
+
+To **restrict signups to a roster**, set an allow-list. Anyone outside the list is rejected at login; existing users are unaffected:
+
+```bash
+sudo tljh-config add-item auth.FirstUseAuthenticator.allowed_users alice
+sudo tljh-config add-item auth.FirstUseAuthenticator.allowed_users bob
+sudo tljh-config add-item auth.FirstUseAuthenticator.allowed_users carol
+sudo tljh-config reload
+```
+
+Each semester: edit the list, `tljh-config reload`, share the same link. Old students keep their accounts unless you delete them explicitly.
+
+Other common operations:
+
+| What | Command |
+|---|---|
+| Make someone an admin (sudoers + hub-admin UI) | `sudo tljh-config add-item users.admin alice && sudo tljh-config reload` |
+| List who has signed up so far | `ls /home/ \| grep ^jupyter-` |
+| Reset a forgotten password | `sudo /opt/tljh/hub/bin/jupyterhub-firstuseauthenticator-reset alice` — they pick a new one on next login |
+| Remove a user completely | `sudo userdel -r jupyter-alice` then remove the row from `/opt/tljh/state/jupyterhub.sqlite` (or `sudo /opt/tljh/hub/bin/jupyterhub --remove-user alice` depending on version) |
+| See current config | `sudo tljh-config show` |
+
 ## Day-to-day ops
 
 - **Pushing notebook updates:** push to `master` on GitHub. Students' next click of the magic link auto-merges; their answers in modified cells are preserved (three-way merge).
-- **Restricting signups:** by default any visitor can register. To lock to a roster: `sudo tljh-config set auth.FirstUseAuthenticator.allowed_users alice bob carol && sudo tljh-config reload`.
-- **Resetting a student's password:** delete the row from `/opt/tljh/state/jupyterhub.sqlite` or use `sudo /opt/tljh/hub/bin/jupyterhub-firstuseauthenticator-reset <username>`. They'll set a fresh password on next login.
 - **Disk usage per student:** each home dir is `/home/jupyter-<username>/`. The repo clone is ~50 MB; growth comes from any data files students download. Check with `sudo du -sh /home/jupyter-*`.
+- **Rotating the tunnel URL:** `sudo systemctl restart cloudflared-lab && sudo journalctl -u cloudflared-lab -n 30 --no-pager | grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' | head -1`.
 - **Disabling the tunnel after the semester:** `sudo systemctl disable --now cloudflared-lab`.
 - **Hitting the GB10:** lower `OLLAMA_NUM_PARALLEL` (or `pull qwen3.5:0.8b` and have students switch the model string — other sub-projects in this repo already use it).
 
