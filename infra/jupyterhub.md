@@ -81,15 +81,25 @@ sudo -E /opt/tljh/user/bin/pip install nbgitpuller
 
 ## Step 3 — Install the lab's Python deps into the shared user env
 
-Mirror `lab01_sol/pyproject.toml` into TLJH's shared user env so `import ollama`, `import langchain`, etc. all just work — no per-student `uv sync`.
+Mirror `lab01_sol/pyproject.toml` into TLJH's shared user env so `import ollama`, `import langchain`, etc. all just work — no per-student `uv sync`. Also install `nbdime` and register it as the system git merge driver (see "nbdime — required" below for why).
 
 ```bash
 cd /home/agentsmith/cwilsch/agentic_ai/lab01_sol
 uv export --format requirements-txt --no-hashes -o /tmp/lab01_reqs.txt
 sudo -E /opt/tljh/user/bin/pip install -r /tmp/lab01_reqs.txt
+
+# notebook-aware merge driver for nbgitpuller updates
+sudo -E /opt/tljh/user/bin/pip install nbdime
+sudo /opt/tljh/user/bin/nbdime config-git --enable --system
 ```
 
 The TLJH user env is shared across all students — install once, everyone gets it.
+
+### nbdime — required, not optional
+
+Without `nbdime`, git's default line-based merge **silently corrupts** student notebooks when Jupyter has auto-modified the file (saved outputs, kernel metadata) and upstream has changed. Symptom: nbgitpuller reports success, the student gets `NotJSONError('Notebook does not appear to be JSON: ...')` on open, and the file has two `language_info` blocks merged together with no conflict markers. `nbdime config-git --enable --system` registers a notebook-aware merge driver so git merges cells, not lines — same scenario then produces either a clean merge or a real conflict that surfaces in nbgitpuller's UI.
+
+Recovery for an already-corrupted student clone: `sudo rm -rf /home/jupyter-<name>/agentic_ai` and have them click the magic link again (nbgitpuller does a fresh clone).
 
 ## Step 4 — Tune Ollama for shared use
 
