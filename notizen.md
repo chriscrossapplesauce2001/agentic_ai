@@ -744,3 +744,9 @@ LLM antwortet:
 Das LLM weiß durch das JSON-Schema **welche Tools existieren** und **welche Parameter sie erwarten**. Es wurde beim Training auf Millionen von Beispielen trainiert, bei denen Tool-Calls im richtigen Format standen. Deshalb generiert es valides JSON — aber es *versteht* den Code nicht, es hat nur gelernt das richtige Format zu produzieren.
 
 </details>
+
+
+12.05.2026
+
+excercise 0 fertig
+link: https://pop-chi-salvation-seats.trycloudflare.com/hub/user-redirect/git-pull?repo=https://github.com/chriscrossapplesauce2001/agentic_ai&branch=master&urlpath=lab/tree/agentic_ai/lab01_sol/exercise0/exercise0.ipynb
