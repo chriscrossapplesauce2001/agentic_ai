@@ -109,8 +109,8 @@ Keep the model resident, allow concurrent inferences:
 sudo mkdir -p /etc/systemd/system/ollama.service.d
 sudo tee /etc/systemd/system/ollama.service.d/override.conf >/dev/null <<'EOF'
 [Service]
-Environment="OLLAMA_NUM_PARALLEL=4"
-Environment="OLLAMA_KEEP_ALIVE=24h"
+Environment="OLLAMA_NUM_PARALLEL=8"
+Environment="OLLAMA_KEEP_ALIVE=1h"
 Environment="OLLAMA_MAX_LOADED_MODELS=2"
 EOF
 
@@ -119,7 +119,7 @@ sudo systemctl restart ollama
 ollama ps   # qwen3.5:4b should be listed once warmed up
 ```
 
-`OLLAMA_NUM_PARALLEL=4` is sized for ~15 students who only intermittently hit `ollama.chat()`. Bump to 6–8 if you see queuing during a lab session.
+`OLLAMA_NUM_PARALLEL=8` covers bursts from ~30 students who only intermittently hit `ollama.chat()` — 8 concurrent generations share one loaded copy of the model via llama.cpp continuous batching. Drop to 4 for ≤15 students, push to 12-16 only if you confirm VRAM headroom in `nvidia-smi`. `KEEP_ALIVE=1h` keeps the model resident across a single lab session and releases the GB10's unified memory between sessions.
 
 ## Step 5 — Cloudflare tunnel
 
