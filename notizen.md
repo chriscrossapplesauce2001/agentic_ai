@@ -750,3 +750,18 @@ Das LLM weiß durch das JSON-Schema **welche Tools existieren** und **welche Par
 
 excercise 0 fertig
 link: https://pop-chi-salvation-seats.trycloudflare.com/hub/user-redirect/git-pull?repo=https://github.com/chriscrossapplesauce2001/agentic_ai&branch=master&urlpath=lab/tree/agentic_ai/lab01_sol/exercise0/exercise0.ipynb
+
+26.05.2026
+meeting
+unterlagen in den downloads
+10 labore 90 min
+- vorschläge Labore 1-10 welche experimente kann man machen
+- schärfen und erstmal die 1-6 machen
+- ausklappbarer text mit code erklären
+- zum code fragen stellen
+- lösungen für die fragen aufschreiben
+- lösungen mit LLM vergleichen ganzes notebook abgeben und dann soll llm kontrollieren das alle fragetexte korregieren
+- und schreibschützen an den stellen wo nichts verändert werden soll
+- als nächstes function calling tool use und MCP
+- Prompt engineering am anfang
+- memes einbauen
