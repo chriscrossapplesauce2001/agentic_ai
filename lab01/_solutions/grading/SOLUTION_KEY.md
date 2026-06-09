@@ -17,10 +17,6 @@
 - ✓ Generation is stopped by a stop token (`<|im_end|>` / EOS) from the chat template, not by the prompt content. `raw=True` with no template = no stop token.
 - ✗ "The model ignored the instruction / does not understand it" without the stop-token point.
 
-**Q3 — `think=False`: which field is empty, which one grows?**
-- ✓ `thinking` is empty (None/""), `content` holds the whole answer.
-- ✓ Reason: both are parsed from one text stream; with no `<think>` block everything lands in `content`.
-
 ### Part 2: Statelessness
 
 **Q1 — Remove the `assistant` entry: does the model still know the name? Why?**

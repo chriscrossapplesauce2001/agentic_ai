@@ -18,14 +18,6 @@
         "claims the model 'ignored' or 'did not understand' the instruction without mentioning stop tokens / the template"
       ]
     },
-    "P1.Q3": {
-      "question": "Add think=False to ollama.chat(). Which field is now empty, which grew?",
-      "core": [
-        "thinking is now empty (None / '')",
-        "content carries the whole answer / grows",
-        "both fields are parsed out of one text stream"
-      ]
-    },
     "P2.Q1": {
       "question": "Remove the assistant entry from the second call. Does the model still know the name? Why?",
       "core": [
@@ -101,9 +93,31 @@
     }
   },
   "exercise1_code": {
-    "TODO1": {"desc": "call ollama.chat with model, messages, tools, options", "patterns": ["response\\s*=\\s*ollama\\.chat\\("]},
-    "TODO2": {"desc": "check msg for tool_calls (truthiness)", "patterns": ["\\bif\\b[^\\n:]*tool_calls[^\\n:]*:"]},
-    "TODO3": {"desc": "dispatch via tool_map, call with **args, append tool result", "patterns": ["=\\s*tool_map\\[", "func\\s*\\(\\s*\\*\\*", "['\"]role['\"]\\s*:\\s*['\"]tool['\"]"]},
-    "TODO4": {"desc": "return msg content as final answer", "patterns": ["final_answer\\s*=\\s*msg"]}
+    "TODO1": {
+      "desc": "call ollama.chat with model, messages, tools, options",
+      "patterns": [
+        "response\\s*=\\s*ollama\\.chat\\("
+      ]
+    },
+    "TODO2": {
+      "desc": "check msg for tool_calls (truthiness)",
+      "patterns": [
+        "\\bif\\b[^\\n:]*tool_calls[^\\n:]*:"
+      ]
+    },
+    "TODO3": {
+      "desc": "dispatch via tool_map, call with **args, append tool result",
+      "patterns": [
+        "=\\s*tool_map\\[",
+        "func\\s*\\(\\s*\\*\\*",
+        "['\"]role['\"]\\s*:\\s*['\"]tool['\"]"
+      ]
+    },
+    "TODO4": {
+      "desc": "return msg content as final answer",
+      "patterns": [
+        "final_answer\\s*=\\s*msg"
+      ]
+    }
   }
 }

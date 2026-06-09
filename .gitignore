@@ -22,6 +22,10 @@ Thumbs.db
 # Jupyter
 .ipynb_checkpoints/
 
+# Generated grader reports (keep the committed demo outputs under demo/)
+*.grade.json
+!demo/*.grade.json
+
 # Claude Code
 .claude/
 
