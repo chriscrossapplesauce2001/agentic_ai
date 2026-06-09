@@ -773,3 +773,17 @@ unterlagen in den downloads
 - Ablauf: Studierende geben das ganze Notebook ab → LLM vergleicht ihre Freitext-Antworten mit der Musterlösung → vergibt Punkte / markiert falsche oder unvollständige Antworten
 - Voraussetzung: die schreibgeschützten Zellen (Fragetexte, fixer Code) bleiben unverändert, nur die Antwort-Zellen werden bewertet
 - TODO: Musterlösung für exercise0/1/2 erstellen, dann Scoring-Prompt + Pipeline bauen
+
+09.06.2026
+notebook feedback
+- brückennotebook zur einarbeitung
+- mehr erklärung
+- grundlegend:
+- mehr and die hand nehmen
+- erstmal llm basics notebook
+- einfacher so einfach wie es geht
+- anmerkungen im chat
+- was ist das robusteste um alle zu bewerten
+- arebiten alle in einem eigenen notebook?
+- lernplan
+- wie geht das hupiter ding
