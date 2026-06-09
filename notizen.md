@@ -765,3 +765,11 @@ unterlagen in den downloads
 - als nächstes function calling tool use und MCP
 - Prompt engineering am anfang
 - memes einbauen oranguntan hammer tools
+
+### Automatisches Scoring-System (Bewertung der Studierenden-Antworten)
+
+- Ziel: Antworten der Studierenden automatisch gegen die korrekten Antworten validieren — mit einem LLM als Bewerter
+- Dafür brauchen wir eine **Musterlösung** je Notebook: die korrekten Antworten auf alle Fragetexte (und ggf. die erwartete Code-Lösung der TODOs)
+- Ablauf: Studierende geben das ganze Notebook ab → LLM vergleicht ihre Freitext-Antworten mit der Musterlösung → vergibt Punkte / markiert falsche oder unvollständige Antworten
+- Voraussetzung: die schreibgeschützten Zellen (Fragetexte, fixer Code) bleiben unverändert, nur die Antwort-Zellen werden bewertet
+- TODO: Musterlösung für exercise0/1/2 erstellen, dann Scoring-Prompt + Pipeline bauen

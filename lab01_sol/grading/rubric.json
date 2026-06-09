@@ -1,0 +1,109 @@
+{
+  "exercise0": {
+    "P1.Q1": {
+      "question": "Remove the <think> prefill from the prompt. What disappears from the output?",
+      "core": [
+        "the thinking / <think>...</think> block disappears; output starts directly with the answer",
+        "the <think> prefill is what triggers thinking mode"
+      ]
+    },
+    "P1.Q2": {
+      "question": "Change the prompt to 'Answer once, then stop: What is 2 + 2?'. Does it still run away? What actually stops generation?",
+      "core": [
+        "yes, it still runs away",
+        "generation is stopped by a stop token (<|im_end|> / EOS) from the chat template, not by an instruction in the prompt text",
+        "raw=True with no chat template means no stop token is emitted"
+      ],
+      "wrong": [
+        "claims the model 'ignored' or 'did not understand' the instruction without mentioning stop tokens / the template"
+      ]
+    },
+    "P1.Q3": {
+      "question": "Add think=False to ollama.chat(). Which field is now empty, which grew?",
+      "core": [
+        "thinking is now empty (None / '')",
+        "content carries the whole answer / grows",
+        "both fields are parsed out of one text stream"
+      ]
+    },
+    "P2.Q1": {
+      "question": "Remove the assistant entry from the second call. Does the model still know the name? Why?",
+      "core": [
+        "yes, it still knows the name (Max)",
+        "the fact is still in the first user message",
+        "the model only sees what is in messages; the assistant echo is not needed"
+      ]
+    },
+    "P2.Q2": {
+      "question": "Replace the assistant content with the hard-coded 'Nice to meet you, Anna!'. What name does the model think you have?",
+      "core": [
+        "Anna",
+        "the model has no own memory; it trusts the conversation history we hand it, even if fabricated"
+      ]
+    },
+    "P2.Q3": {
+      "question": "Move the fact into a system message. Does it work? Which role for instructions/stable facts, and why different from mid-conversation facts?",
+      "core": [
+        "yes, it still works (answers Max); the system message is part of the context",
+        "instructions and stable facts conventionally live in the system role",
+        "facts the user states during the dialogue go in user turns",
+        "the role is a convention (reinforced in training) for how durable / authoritative the text is"
+      ]
+    },
+    "P3.Q1": {
+      "question": "Set the tool description to ''. Does the model still call the tool?",
+      "variable": true,
+      "core": [
+        "the description is the main signal for WHEN to use a tool; empty makes routing less reliable, especially for ambiguous tasks"
+      ],
+      "accept": [
+        "either observed outcome (still calls / does not) is fine if the student identifies the description as the routing signal"
+      ]
+    },
+    "P3.Q2": {
+      "question": "Change the prompt to 'What is 2 + 2?'. Tool call or direct answer? content vs tool_calls?",
+      "variable": true,
+      "core": [
+        "the model decides itself whether a tool is worth calling",
+        "for trivial math it often answers directly: content filled, tool_calls empty/None"
+      ]
+    },
+    "P3.Q3": {
+      "question": "Rename the tool to 'math_thing' but leave tool_map unchanged. What error, at which line?",
+      "core": [
+        "KeyError: 'math_thing'",
+        "at the tool_map[tc.function.name] lookup line",
+        "the tool name in the definition must match the key in tool_map"
+      ]
+    },
+    "P4.Q1": {
+      "question": "Remove the assistant tool-call append (keep the tool result). What does the final response look like and why?",
+      "core": [
+        "the history becomes inconsistent: a tool message with no preceding assistant tool_calls message",
+        "the final answer is wrong / confused (or the tool is re-issued)",
+        "both messages must be appended in order: first assistant (with tool_calls), then the tool result"
+      ]
+    },
+    "P4.Q2": {
+      "question": "Prompt 'Calculate 17 * 23, then divide by 2' inside a while loop. One combined call or two sequential?",
+      "variable": true,
+      "core": [
+        "either one combined call (17*23)/2 or two sequential calls is valid",
+        "the while loop is needed because the model may chain multiple tool calls across iterations; the cap prevents an infinite loop"
+      ]
+    },
+    "P4.Q3": {
+      "question": "Prompt 'Tell me a short joke' with the calculator tool still present. Does it touch the calculator?",
+      "core": [
+        "no; content holds the joke, tool_calls is empty/None",
+        "providing tools does not force their use; the model chooses per request whether a tool is relevant"
+      ]
+    }
+  },
+  "exercise1_code": {
+    "TODO1": {"desc": "call ollama.chat with model, messages, tools, options", "patterns": ["response\\s*=\\s*ollama\\.chat\\("]},
+    "TODO2": {"desc": "check msg for tool_calls (truthiness)", "patterns": ["\\bif\\b[^\\n:]*tool_calls[^\\n:]*:"]},
+    "TODO3": {"desc": "dispatch via tool_map, call with **args, append tool result", "patterns": ["=\\s*tool_map\\[", "func\\s*\\(\\s*\\*\\*", "['\"]role['\"]\\s*:\\s*['\"]tool['\"]"]},
+    "TODO4": {"desc": "return msg content as final answer", "patterns": ["final_answer\\s*=\\s*msg"]}
+  }
+}
