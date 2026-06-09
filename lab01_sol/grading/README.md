@@ -30,12 +30,16 @@ Der Grader zieht den Text nach jedem Tag bis zum nächsten Tag. Fehlt ein Tag, w
 ## Benutzung
 
 ```bash
-# Judge-Modell setzen (irgendein 8B+ Modell, das auf dem Spark gepullt ist):
-ollama pull qwen3.5:14b
-export JUDGE_MODEL=qwen3.5:14b
+# Aus dem lab01_sol/ Verzeichnis ausfuehren, damit das ollama-Paket aus der uv-Umgebung
+# verfuegbar ist (grade.py braucht `ollama`):
+cd ..                       # -> lab01_sol/
 
-python3 grade.py abgabe_student_ex0.ipynb abgabe_student_ex1.ipynb
-python3 grade.py --dry-run abgabe.ipynb   # nur Antworten extrahieren, kein LLM
+# Default-Judge ist nemotron-3-super:latest (auf dem Spark gepullt, max. Qualitaet).
+# Optional ueberschreiben mit einem anderen gepullten Modell:
+# export JUDGE_MODEL=llama3.3:70b
+
+uv run python grading/grade.py abgabe_student_ex0.ipynb abgabe_student_ex1.ipynb
+uv run python grading/grade.py --dry-run abgabe.ipynb   # nur Antworten extrahieren, kein LLM
 ```
 
 Pro Notebook wird ein `*.grade.json` mit den Labels (`correct / partial / incorrect / missing`) geschrieben. Routing (Code vs. Freitext) passiert automatisch anhand des Inhalts.

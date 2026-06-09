@@ -17,7 +17,7 @@ The grader extracts the text after each tag up to the next tag.
 
 Usage
 -----
-    JUDGE_MODEL=qwen3.5:14b python grade.py submission_ex0.ipynb [submission_ex1.ipynb ...]
+    JUDGE_MODEL=nemotron-3-super:latest python grade.py submission_ex0.ipynb [submission_ex1.ipynb ...]
     python grade.py --dry-run submission_ex0.ipynb     # extract answers, no LLM
 """
 
@@ -26,7 +26,7 @@ import os
 import re
 import sys
 
-JUDGE_MODEL = os.environ.get("JUDGE_MODEL", "qwen3.5:14b")  # set to whatever 8B+ model you pulled
+JUDGE_MODEL = os.environ.get("JUDGE_MODEL", "nemotron-3-super:latest")  # override with any model pulled on the Spark
 RUBRIC_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "rubric.json")
 TAG_RE = re.compile(r"\bP(\d+)\.Q(\d+)\s*:", re.IGNORECASE)
 
