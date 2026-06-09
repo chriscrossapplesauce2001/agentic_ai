@@ -764,4 +764,4 @@ unterlagen in den downloads
 - und schreibschützen an den stellen wo nichts verändert werden soll
 - als nächstes function calling tool use und MCP
 - Prompt engineering am anfang
-- memes einbauen
+- memes einbauen oranguntan hammer tools
