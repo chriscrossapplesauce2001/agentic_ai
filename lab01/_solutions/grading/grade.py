@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Auto-grade Lab 01 submissions against the Musterlösung rubric.
+"""Auto-grade Lab 01 submissions against the solution-key rubric.
 
 Free-text answers (Exercise 0) are graded by a local judge LLM (a bigger model
 than the students run). Code TODOs (Exercise 1) are checked deterministically,
@@ -15,10 +15,12 @@ Each free-text answer is tagged with its rubric id anywhere in the notebook
 
 The grader extracts the text after each tag up to the next tag.
 
-Usage
+Usage (run from lab01/ so the uv env's `ollama` is importable)
 -----
-    JUDGE_MODEL=nemotron-3-super:latest python grade.py submission_ex0.ipynb [submission_ex1.ipynb ...]
-    python grade.py --dry-run submission_ex0.ipynb     # extract answers, no LLM
+    uv run python _solutions/grading/grade.py submission_ex0.ipynb [submission_ex1.ipynb ...]
+    uv run python _solutions/grading/grade.py --dry-run submission_ex0.ipynb   # extract answers, no LLM
+
+Each answer scores 1.0 (correct) / 0.5 (partial) / 0.0 (incorrect or missing).
 """
 
 import json
@@ -29,6 +31,9 @@ import sys
 JUDGE_MODEL = os.environ.get("JUDGE_MODEL", "nemotron-3-super:latest")  # override with any model pulled on the Spark
 RUBRIC_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "rubric.json")
 TAG_RE = re.compile(r"\bP(\d+)\.Q(\d+)\s*:", re.IGNORECASE)
+
+# Numeric score per label: correct = full credit, partial = half, everything else = none.
+SCORE = {"correct": 1.0, "partial": 0.5, "incorrect": 0.0, "missing": 0.0, "error": 0.0}
 
 JUDGE_SYSTEM = (
     "You grade a student's short answer in a course on how LLM agents work. "
@@ -152,14 +157,20 @@ def is_exercise1(cells):
     return any("def run_agent" in src for _, src in cells)
 
 
-def print_report(path, results):
+def print_report(path, results, dry_run=False):
     print(f"\n=== {os.path.basename(path)} ===")
+    if dry_run:
+        for qid, r in results.items():
+            print(f"  {qid:8} {r['reason']}")
+        return
     counts = {}
+    total = 0.0
     for qid, r in results.items():
         counts[r["label"]] = counts.get(r["label"], 0) + 1
-        print(f"  {qid:8} {r['label']:10} {r['reason']}")
+        total += r["score"]
+        print(f"  {qid:8} {r['score']:>4.1f}  {r['label']:10} {r['reason']}")
     summary = "  ".join(f"{k}={v}" for k, v in sorted(counts.items()))
-    print(f"  ---- {summary}")
+    print(f"  ---- score {total:.1f} / {len(results):d}   ({summary})")
 
 
 def main(argv):
@@ -178,10 +189,20 @@ def main(argv):
             results = check_code(cells, rubric)
         else:
             results = grade_freetext(cells, rubric, dry_run)
-        print_report(path, results)
+        if not dry_run:
+            for r in results.values():
+                r["score"] = SCORE.get(r["label"], 0.0)
+        print_report(path, results, dry_run)
         out_path = os.path.splitext(path)[0] + ".grade.json"
+        payload = results
+        if not dry_run:
+            payload = {
+                "total": round(sum(r["score"] for r in results.values()), 2),
+                "max": len(results),
+                "questions": results,
+            }
         with open(out_path, "w", encoding="utf-8") as f:
-            json.dump(results, f, indent=2, ensure_ascii=False)
+            json.dump(payload, f, indent=2, ensure_ascii=False)
     return 0
 
 

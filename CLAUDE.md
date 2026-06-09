@@ -17,22 +17,21 @@ work lives under `_superseded/` (see below).
 
 | Path | Purpose |
 |---|---|
-| **lab01/** | Lab 1 — ReAct agents with Ollama. Student-facing notebooks `exercise0`–`exercise2`, setup in `lab01/README.md`. Uses `uv` for env management (`uv sync`). Student model: `qwen3.5:4b`. |
-| **lab01_sol/** | Solutions for Lab 1 **and** the auto-grading system in `lab01_sol/grading/`. Internal — answer key, not for students. |
+| **lab01/** | Lab 1 — ReAct agents with Ollama. Student-facing notebooks `exercise0`–`exercise2`, setup in `lab01/README.md`. Uses `uv` for env management (`uv sync`). Student model: `qwen3.5:4b`. The internal answer key + auto-grader live in `lab01/_solutions/` (reference solution notebooks + `_solutions/grading/`). |
 | **materials/** | Course documents provided by the module lead (Modulbeschreibung, Lehreinheiten, Labor catalog). |
 | **infra/** | Deployment runbook: `jupyterhub.md` — TLJH + nbgitpuller + cloudflared serving the lab notebooks to students on the Spark. |
 | **literature/** | Curated Agentic AI literature review (sources, navigation table, German summaries). |
 | **_superseded/** | Earlier exploratory phase, kept for reference, not part of the current lab. |
 | `notizen.md` | Working notes and meeting minutes (German). |
-| `README.md` | Top-level orientation for the professor (German). |
+| `README.md` | Top-level orientation (English). |
 
-## Auto-Grading (`lab01_sol/grading/`)
+## Auto-Grading (`lab01/_solutions/grading/`)
 
-Grades a submitted Lab 1 notebook against the Musterlösung:
+Grades a submitted Lab 1 notebook against the solution key. Run from `lab01/` via `uv run python _solutions/grading/grade.py ...` so the `ollama` package from the uv env is available.
 - **Exercise 0 (free-text answers)** — graded by a **judge LLM**, one question at a time, against `rubric.json`. Default judge model: `nemotron-3-super:latest` (override via `JUDGE_MODEL` env var). Students tag each answer with its rubric id (`P<part>.Q<n>:`); the grader extracts the text after each tag.
 - **Exercise 1 (code TODOs)** — checked **deterministically** with anchored regexes on the `run_agent` code, no LLM.
 
-`grade.py` writes a `<notebook>.grade.json` report per submission. Routing (code vs. free-text) is automatic based on notebook content. Files: `grade.py` (stdlib + `ollama` only), `rubric.json` (machine-readable rubric), `MUSTERLOESUNG.md` (human-readable rubric), `README.md`.
+Each answer is scored **1.0 / 0.5 / 0.0** (correct / partial / incorrect; missing = 0). `grade.py` writes a `<notebook>.grade.json` report per submission with per-question score + label and a total. Routing (code vs. free-text) is automatic based on notebook content. Files: `grade.py` (stdlib + `ollama` only), `rubric.json` (machine-readable rubric), `SOLUTION_KEY.md` (human-readable rubric), `README.md`.
 
 ## Superseded sub-projects
 
@@ -67,4 +66,4 @@ uv run jupyter notebook
 
 - Lab notebook prose: **no em dashes** — use colons, commas, or sentence breaks instead.
 - Lab audience are newcomers to LLM internals: define jargon, flag model-specific vs. universal behavior.
-- `lab01_sol/` (solutions + grading) is internal answer-key material.
+- `lab01/_solutions/` (solutions + grading) is internal answer-key material.

@@ -81,10 +81,10 @@ sudo -E /opt/tljh/user/bin/pip install nbgitpuller
 
 ## Step 3 — Install the lab's Python deps into the shared user env
 
-Mirror `lab01_sol/pyproject.toml` into TLJH's shared user env so `import ollama`, `import langchain`, etc. all just work — no per-student `uv sync`. Also install `nbdime` and register it as the system git merge driver (see "nbdime — required" below for why).
+Mirror `lab01/pyproject.toml` into TLJH's shared user env so `import ollama`, `import langchain`, etc. all just work — no per-student `uv sync`. Also install `nbdime` and register it as the system git merge driver (see "nbdime — required" below for why).
 
 ```bash
-cd /home/agentsmith/cwilsch/agentic_ai/lab01_sol
+cd /home/agentsmith/cwilsch/agentic_ai/lab01
 uv export --format requirements-txt --no-hashes -o /tmp/lab01_reqs.txt
 sudo -E /opt/tljh/user/bin/pip install -r /tmp/lab01_reqs.txt
 
@@ -156,7 +156,7 @@ sudo journalctl -u cloudflared-lab -n 30 --no-pager   # extract the trycloudflar
 Replace `<random>` with the hostname from `journalctl`. Hand students this single URL:
 
 ```
-https://<random>.trycloudflare.com/hub/user-redirect/git-pull?repo=https://github.com/chriscrossapplesauce2001/agentic_ai&branch=master&urlpath=lab/tree/agentic_ai/lab01_sol/exercise0/exercise0.ipynb
+https://<random>.trycloudflare.com/hub/user-redirect/git-pull?repo=https://github.com/chriscrossapplesauce2001/agentic_ai&branch=master&urlpath=lab/tree/agentic_ai/lab01/exercise0/exercise0.ipynb
 ```
 
 First click per student:
@@ -172,7 +172,7 @@ Before sharing the link with students:
 
 1. `curl -I http://localhost/hub` → `200` or `302`.
 2. Open `http://localhost` on the Spark, log in as `agentsmith`, set a password.
-3. Visit the local git-pull URL: `http://localhost/hub/user-redirect/git-pull?repo=https://github.com/chriscrossapplesauce2001/agentic_ai&branch=master&urlpath=lab/tree/agentic_ai/lab01_sol/exercise0/exercise0.ipynb` → notebook opens, repo at `~/agentic_ai/`.
+3. Visit the local git-pull URL: `http://localhost/hub/user-redirect/git-pull?repo=https://github.com/chriscrossapplesauce2001/agentic_ai&branch=master&urlpath=lab/tree/agentic_ai/lab01/exercise0/exercise0.ipynb` → notebook opens, repo at `~/agentic_ai/`.
 4. Run cell 0 of `exercise0.ipynb` → prints `OK`. Run cell 5 → completes without errors.
 5. Open the public trycloudflare URL on a device off the Spark's network (phone on cellular is easiest). Repeat step 3 against the public URL.
 6. Open a second browser / incognito, sign up as a different username, run the notebook in parallel. Both should respond; `ollama ps` should still show one loaded model.

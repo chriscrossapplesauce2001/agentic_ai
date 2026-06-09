@@ -1,36 +1,40 @@
-# Agentic AI — Laborunterlagen
+# Agentic AI — Lab Material
 
-Lehrmaterial zum Modul **Agentic AI**: Jupyter-basierte Labore, in denen Studierende
-agentische KI-Konzepte (ReAct, Tool-Use, Function Calling, MCP) Schritt für Schritt
-selbst implementieren. LLM-Backend ist ein lokal laufendes **Ollama** auf dem DGX Spark,
-es werden keine Cloud-API-Schlüssel benötigt.
+Teaching material for the **Agentic AI** module: Jupyter-based labs in which students
+implement agentic AI concepts (ReAct, tool use, function calling, MCP) themselves, step by
+step. The LLM backend is a locally running **Ollama** on the DGX Spark, so no cloud API keys
+are needed for inference.
 
-## Struktur
+## Structure
 
-| Ordner | Inhalt |
+| Folder | Contents |
 |---|---|
-| **lab01/** | Lab 1 — ReAct-Agenten mit Ollama. Die studierendenseitigen Notebooks (`exercise0`–`exercise2`) inklusive Setup-Anleitung in [`lab01/README.md`](lab01/README.md). |
-| **lab01_sol/** | Musterlösungen zu Lab 1 **plus** das automatische Bewertungssystem in `lab01_sol/grading/`. *Intern — nicht an Studierende verteilen.* |
-| **materials/** | Vom Modulverantwortlichen bereitgestellte Unterlagen (Modulbeschreibung, Lehreinheiten, Labor-Katalog). |
-| **infra/** | Deployment-Runbook: JupyterHub auf dem Spark, das die Notebooks an die Studierenden ausliefert ([`infra/jupyterhub.md`](infra/jupyterhub.md)). |
-| **literature/** | Kuratierter Literaturüberblick zu Agentic AI (Quellen, Tabellen, Zusammenfassungen). |
-| **_superseded/** | Frühere Experimentierphase (eigenständige LangChain-/LangGraph-/Ollama-Teilprojekte, Voice-Experimente, Benchmarks). Für das aktuelle Lab nicht mehr benötigt, zur Nachvollziehbarkeit aufbewahrt. |
-| `notizen.md` | Laufende Arbeitsnotizen und Besprechungsprotokolle. |
+| **lab01/** | Lab 1 — ReAct agents with Ollama. The student-facing notebooks (`exercise0`–`exercise2`) and setup instructions in [`lab01/README.md`](lab01/README.md). The internal answer key and auto-grader live in `lab01/_solutions/` (see below). |
+| **materials/** | Documents provided by the module lead (module description, teaching units, lab catalog). |
+| **infra/** | Deployment runbook: JupyterHub on the Spark, which delivers the notebooks to students ([`infra/jupyterhub.md`](infra/jupyterhub.md)). |
+| **literature/** | Curated literature review on Agentic AI (sources, tables, summaries). |
+| **_superseded/** | Earlier exploratory phase (standalone LangChain / LangGraph / Ollama sub-projects, voice experiments, benchmarks). No longer needed for the current lab, kept for reference. |
+| `notizen.md` | Working notes and meeting minutes (German). |
 
-## Schnellstart (Lab 1)
+## Quick start (Lab 1)
 
 ```bash
-ollama pull qwen3.5:4b      # Modell, das die Studierenden nutzen
+ollama pull qwen3.5:4b      # model the students use
 cd lab01
-uv sync                     # erstellt .venv/ und installiert Abhängigkeiten
-uv run jupyter notebook     # Notebooks öffnen
+uv sync                     # creates .venv/ and installs dependencies
+uv run jupyter notebook     # open the notebooks
 ```
 
-Die vollständige Anleitung (uv-Installation, Jupyter-Kernel, Übungsübersicht) steht in
+Full instructions (uv installation, Jupyter kernel, exercise overview) are in
 [`lab01/README.md`](lab01/README.md).
 
-## Bewertung
+## Solutions & grading (internal)
 
-Das automatische Grading (`lab01_sol/grading/`) prüft abgegebene Notebooks gegen eine
-Musterlösung: Freitext-Antworten werden von einem lokalen Judge-LLM bewertet, Code-TODOs
-deterministisch per Regex. Details in [`lab01_sol/grading/README.md`](lab01_sol/grading/README.md).
+`lab01/_solutions/` holds the reference solution notebooks and the auto-grading system
+(`lab01/_solutions/grading/`). The grader checks submitted notebooks against a solution key:
+free-text answers are scored by a local judge LLM, code TODOs deterministically via regex.
+Details in [`lab01/_solutions/grading/README.md`](lab01/_solutions/grading/README.md).
+
+> **Note:** this material is internal. While the repo is public and nbgitpuller clones the
+> whole repo to students, `_solutions/` is reachable by them; serve a student branch without
+> it (or keep it private) before the lab goes live.
