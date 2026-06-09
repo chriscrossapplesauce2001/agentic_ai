@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Auto-grade Lab 01 submissions against the solution-key rubric.
 
-Free-text answers (Exercise 0) are graded by a local judge LLM (a bigger model
-than the students run). Code TODOs (Exercise 1) are checked deterministically,
+Free-text answers (Exercise 1) are graded by a local judge LLM (a bigger model
+than the students run). Code TODOs (Exercise 2) are checked deterministically,
 no LLM. Only stdlib + the `ollama` package are required.
 
 Submission convention
@@ -117,7 +117,7 @@ def judge(qid, spec, answer):
 def grade_freetext(cells, rubric, dry_run):
     answers = extract_answers(cells)
     results = {}
-    for qid, spec in rubric["exercise0"].items():
+    for qid, spec in rubric["exercise1"].items():
         ans = answers.get(qid, "")
         if dry_run:
             results[qid] = {"label": "—", "reason": f"extracted {len(ans)} chars" if ans else "MISSING"}
@@ -141,7 +141,7 @@ def check_code(cells, rubric):
     m = re.search(r"def run_agent\(.*?(?=\ndef |\Z)", blob, re.DOTALL)
     run_agent = _strip_comments(m.group(0)) if m else ""
     results = {}
-    for tid, spec in rubric["exercise1_code"].items():
+    for tid, spec in rubric["exercise2_code"].items():
         if not run_agent:
             results[tid] = {"label": "missing", "reason": "run_agent() not found"}
             continue
@@ -153,7 +153,7 @@ def check_code(cells, rubric):
     return results
 
 
-def is_exercise1(cells):
+def is_code_exercise(cells):
     return any("def run_agent" in src for _, src in cells)
 
 
@@ -185,7 +185,7 @@ def main(argv):
         print(f"Judge model: {JUDGE_MODEL}  (override with JUDGE_MODEL=...)")
     for path in paths:
         cells = notebook_cells_text(path)
-        if is_exercise1(cells):
+        if is_code_exercise(cells):
             results = check_code(cells, rubric)
         else:
             results = grade_freetext(cells, rubric, dry_run)

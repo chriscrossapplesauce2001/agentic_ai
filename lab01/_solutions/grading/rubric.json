@@ -1,5 +1,5 @@
 {
-  "exercise0": {
+  "exercise1": {
     "P1.Q1": {
       "question": "Remove the <think> prefill from the prompt. What disappears from the output?",
       "core": [
@@ -92,7 +92,7 @@
       ]
     }
   },
-  "exercise1_code": {
+  "exercise2_code": {
     "TODO1": {
       "desc": "call ollama.chat with model, messages, tools, options",
       "patterns": [

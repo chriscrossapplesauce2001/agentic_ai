@@ -4,7 +4,7 @@
 
 ---
 
-## Exercise 0 — How an LLM API Call Works (free text, LLM-graded)
+## Exercise 1 — How an LLM API Call Works (free text, LLM-graded)
 
 ### Part 1: A Single LLM Call
 
@@ -63,7 +63,7 @@
 
 ---
 
-## Exercise 1 — ReAct loop (code, deterministically graded, no LLM needed)
+## Exercise 2 — ReAct loop (code, deterministically graded, no LLM needed)
 
 **TODO 1** `response = ollama.chat(model=MODEL, messages=messages, tools=TOOLS, options={"num_ctx": NUM_CTX, "temperature": TEMPERATURE})`
 
@@ -85,6 +85,6 @@ messages.append({"role": "tool", "content": result})
 
 ---
 
-## Exercise 2 — LangChain
+## Exercise 3 — LangChain
 
 **Open:** `exercise2.ipynb` does not exist yet. Rubric follows once it is built. Core: the same agent via `create_react_agent()` + `@tool` functions, functionally identical to Exercise 1, with noticeably less code.

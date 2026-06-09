@@ -9,7 +9,7 @@ are needed for inference.
 
 | Folder | Contents |
 |---|---|
-| **lab01/** | Lab 1 — ReAct agents with Ollama. The student-facing notebooks (`exercise0`–`exercise2`) and setup instructions in [`lab01/README.md`](lab01/README.md). The internal answer key and auto-grader live in `lab01/_solutions/` (see below). |
+| **lab01/** | Lab 1 — ReAct agents with Ollama. The student-facing notebooks (`exercise0` = LLM basics on-ramp, through `exercise3` = LangChain) and setup instructions in [`lab01/README.md`](lab01/README.md). The internal answer key and auto-grader live in `lab01/_solutions/` (see below). |
 | **materials/** | Documents provided by the module lead (module description, teaching units, lab catalog). |
 | **infra/** | Deployment runbook: JupyterHub on the Spark, which delivers the notebooks to students ([`infra/jupyterhub.md`](infra/jupyterhub.md)). |
 | **literature/** | Curated literature review on Agentic AI (sources, tables, summaries). |

@@ -3,8 +3,8 @@
 **Internal. Do not distribute to students, and do not push to a public repo** (see warning below).
 
 Grades a submitted Lab 01 notebook against the reference solution:
-- **Exercise 0** (free-text "Your Turn" answers): graded by a **judge LLM**, one question at a time, against the rubric in `rubric.json`.
-- **Exercise 1** (code TODOs): checked **deterministically** (anchored regex on the `run_agent` code), no LLM.
+- **Exercise 1** (free-text "Your Turn" answers): graded by a **judge LLM**, one question at a time, against the rubric in `rubric.json`. (Exercise 0 is ungraded LLM-basics onboarding.)
+- **Exercise 2** (code TODOs): checked **deterministically** (anchored regex on the `run_agent` code), no LLM.
 
 ## Files
 
@@ -25,7 +25,7 @@ Students tag each answer with its question id, anywhere in the notebook (code co
 
 The grader takes the text after each tag up to the next tag. A missing tag means the question is scored `missing` (no LLM call).
 
-> **Note:** `lab01/exercise0/exercise0.ipynb` is patched so each "Your Turn" cell points at the tagging convention and has an **Answers** cell below it with pre-filled `P{part}.Q{n}:` stubs. Students only write after the colon. (Exercise 1 is code and needs no tags.)
+> **Note:** `lab01/exercise1/exercise1.ipynb` is patched so each "Your Turn" cell points at the tagging convention and has an **Answers** cell below it with pre-filled `P{part}.Q{n}:` stubs. Students only write after the colon. (Exercise 2 is code and needs no tags.)
 
 ## Usage
 
@@ -38,7 +38,7 @@ cd lab01
 # Optionally override with another pulled model:
 # export JUDGE_MODEL=llama3.3:70b
 
-uv run python _solutions/grading/grade.py student_submission_ex0.ipynb student_submission_ex1.ipynb
+uv run python _solutions/grading/grade.py student_submission_ex1.ipynb student_submission_ex2.ipynb
 uv run python _solutions/grading/grade.py --dry-run submission.ipynb   # extract answers only, no LLM
 ```
 
