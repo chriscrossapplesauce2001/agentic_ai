@@ -44,6 +44,27 @@ uv run python _solutions/grading/grade.py --dry-run submission.ipynb   # extract
 
 Each notebook gets a `*.grade.json` with the labels (`correct / partial / incorrect / missing`). Routing (code vs. free-text) is automatic based on content.
 
+## Collecting all submissions (the robust workflow)
+
+Students never "submit": every student works in their own clone in their home dir on the Spark
+(`/home/jupyter-<name>/agentic_ai/...`), delivered by nbgitpuller. At the deadline the instructor
+just harvests those files. No upload, no submit button, no exchange server to fail.
+
+```bash
+cd lab01
+uv run python _solutions/grading/collect_and_grade.py
+```
+
+This copies each student's `exercise1`/`exercise2` notebooks into `submissions/<student>/`, grades
+every one (in its own subprocess, so one bad notebook can't sink the batch), and writes
+`submissions/summary.csv` (per student: exercise1 score/max, exercise2 score/max, or `MISSING`).
+
+- `--dry-run` skips the LLM (still scores the deterministic code exercise) for a fast sanity pass.
+- Env overrides: `HOMES` (default `/home/jupyter-*`), `OUT` (default `./submissions`).
+
+Students only have to **save** their notebook (Jupyter autosaves) and not rename/move it. The
+answer-tagging stubs keep their answers in a predictable place.
+
 ## Deliberate design choices
 
 - **Judge = a larger model than the students run.** Grading is offline/batch over ≤15 submissions, so latency does not matter. `temperature=0`, `format=json` for 100% parseable output.

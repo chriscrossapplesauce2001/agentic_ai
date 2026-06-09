@@ -26,6 +26,9 @@ Thumbs.db
 *.grade.json
 !demo/*.grade.json
 
+# Collected student submissions (instructor-only, produced by collect_and_grade.py)
+submissions/
+
 # Claude Code
 .claude/
 

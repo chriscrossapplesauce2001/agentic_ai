@@ -185,17 +185,20 @@ def main(argv):
         print(f"Judge model: {JUDGE_MODEL}  (override with JUDGE_MODEL=...)")
     for path in paths:
         cells = notebook_cells_text(path)
-        if is_code_exercise(cells):
+        is_code = is_code_exercise(cells)
+        if is_code:
             results = check_code(cells, rubric)
         else:
             results = grade_freetext(cells, rubric, dry_run)
-        if not dry_run:
+        # Code is deterministic and always graded; free-text under --dry-run is extraction only.
+        graded = is_code or not dry_run
+        if graded:
             for r in results.values():
                 r["score"] = SCORE.get(r["label"], 0.0)
-        print_report(path, results, dry_run)
+        print_report(path, results, dry_run=not graded)
         out_path = os.path.splitext(path)[0] + ".grade.json"
         payload = results
-        if not dry_run:
+        if graded:
             payload = {
                 "total": round(sum(r["score"] for r in results.values()), 2),
                 "max": len(results),
