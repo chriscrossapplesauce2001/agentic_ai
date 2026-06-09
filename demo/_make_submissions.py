@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate 3 fake Exercise-0 student submissions of varying quality, for a grading demo.
+"""Generate 3 fake Exercise-1 student submissions of varying quality, for a grading demo.
 
 Each is a minimal .ipynb whose answer cells carry `P<part>.Q<n>:` tags, exactly the format
 the grader extracts. An empty value (e.g. "P2.Q3:") models a student who left a stub blank
@@ -58,7 +58,7 @@ STUDENT_C = {  # weak: mostly wrong or blank
 def make_notebook(answers):
     cells = [{
         "cell_type": "markdown", "metadata": {},
-        "source": ["# Exercise 0 — Submission\n", "\n", "(Answers tagged per question below.)"],
+        "source": ["# Exercise 1 — Submission\n", "\n", "(Answers tagged per question below.)"],
     }]
     for part in (1, 2, 3, 4):
         lines = [f"# Part {part} answers\n"]
@@ -73,7 +73,7 @@ def make_notebook(answers):
 
 
 for name, answers in [("student_a", STUDENT_A), ("student_b", STUDENT_B), ("student_c", STUDENT_C)]:
-    path = os.path.join(HERE, f"{name}_ex0.ipynb")
+    path = os.path.join(HERE, f"{name}_ex1.ipynb")
     with open(path, "w", encoding="utf-8") as f:
         json.dump(make_notebook(answers), f, indent=1, ensure_ascii=False)
     print(f"wrote {path}")

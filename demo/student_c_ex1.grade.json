@@ -1,0 +1,61 @@
+{
+  "total": 1.5,
+  "max": 11,
+  "questions": {
+    "P1.Q1": {
+      "label": "partial",
+      "reason": "Student notes the thinking block is removed but omits that the output then starts directly with the answer and that the prefill triggers thinking mode.",
+      "score": 0.5
+    },
+    "P1.Q2": {
+      "label": "missing",
+      "reason": "no answer tagged for this question",
+      "score": 0.0
+    },
+    "P2.Q1": {
+      "label": "incorrect",
+      "reason": "The student claims the model forgets the name, but the correct answer is that it still knows the name because it is present in the first user message.",
+      "score": 0.0
+    },
+    "P2.Q2": {
+      "label": "missing",
+      "reason": "no answer tagged for this question",
+      "score": 0.0
+    },
+    "P2.Q3": {
+      "label": "incorrect",
+      "reason": "The answer only says 'Yes' without explaining that system messages hold stable facts/instructions and user turns hold mid-conversation facts, missing the core points.",
+      "score": 0.0
+    },
+    "P3.Q1": {
+      "label": "missing",
+      "reason": "no answer tagged for this question",
+      "score": 0.0
+    },
+    "P3.Q2": {
+      "label": "incorrect",
+      "reason": "The answer states the model calls the tool, missing the core point that the model decides itself and often answers directly for trivial math.",
+      "score": 0.0
+    },
+    "P3.Q3": {
+      "label": "incorrect",
+      "reason": "The answer does not mention the KeyError, the specific line, or the mismatch between tool name and tool_map key.",
+      "score": 0.0
+    },
+    "P4.Q1": {
+      "label": "missing",
+      "reason": "no answer tagged for this question",
+      "score": 0.0
+    },
+    "P4.Q2": {
+      "label": "correct",
+      "reason": "Student correctly states that a single combined call is a valid approach, matching the rubric's allowance for either one or two calls.",
+      "score": 1.0
+    },
+    "P4.Q3": {
+      "label": "incorrect",
+      "reason": "The student claims the calculator is used, but the correct answer is that the model does not touch the calculator for a joke request.",
+      "score": 0.0
+    }
+  }
+}

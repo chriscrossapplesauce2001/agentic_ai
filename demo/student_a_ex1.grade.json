@@ -1,0 +1,61 @@
+{
+  "total": 10.0,
+  "max": 11,
+  "questions": {
+    "P1.Q1": {
+      "label": "error",
+      "reason": "judge returned unparseable output: Invalid \\uXXXX escape: line 3 column 98401 (char 98424)",
+      "score": 0.0
+    },
+    "P1.Q2": {
+      "label": "correct",
+      "reason": "The answer correctly states that the model keeps generating and that only a stop token from the chat template halts generation, matching the core points.",
+      "score": 1.0
+    },
+    "P2.Q1": {
+      "label": "correct",
+      "reason": "Student answer includes all core points: yes, name still known because it's in first user message, model only sees messages, assistant echo not needed.",
+      "score": 1.0
+    },
+    "P2.Q2": {
+      "label": "correct",
+      "reason": "The answer correctly states the name Anna and explains that the model has no memory and trusts the provided conversation history.",
+      "score": 1.0
+    },
+    "P2.Q3": {
+      "label": "correct",
+      "reason": "The student's answer covers all core points: confirms it works, notes system content is part of context, assigns instructions/stable facts to the system role, places dialogue facts in user turns, and treats the role as a convention for durability/authority.",
+      "score": 1.0
+    },
+    "P3.Q1": {
+      "label": "correct",
+      "reason": "The student correctly identifies the description as the main signal for tool use and notes that emptying it reduces reliability, matching the core point.",
+      "score": 1.0
+    },
+    "P3.Q2": {
+      "label": "correct",
+      "reason": "The student correctly states that the model decides whether to use a tool and for trivial math answers directly with content filled and tool_calls empty.",
+      "score": 1.0
+    },
+    "P3.Q3": {
+      "label": "correct",
+      "reason": "Student correctly identifies the KeyError, the exact line where it occurs, and the reason that the tool name must match the key in tool_map.",
+      "score": 1.0
+    },
+    "P4.Q1": {
+      "label": "correct",
+      "reason": "The student's answer captures all core points: inconsistency of history, wrong/confused result or re-issued tool, and the required order of appending messages.",
+      "score": 1.0
+    },
+    "P4.Q2": {
+      "label": "correct",
+      "reason": "Student correctly states both call options are valid and explains the while loop's purpose for chaining tool calls and preventing infinite loops.",
+      "score": 1.0
+    },
+    "P4.Q3": {
+      "label": "correct",
+      "reason": "The answer correctly states that the model does not use the calculator tool for a joke request, noting empty tool_calls and that tool presence does not force use.",
+      "score": 1.0
+    }
+  }
+}

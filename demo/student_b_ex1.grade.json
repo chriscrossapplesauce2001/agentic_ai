@@ -1,0 +1,61 @@
+{
+  "total": 5.5,
+  "max": 11,
+  "questions": {
+    "P1.Q1": {
+      "label": "correct",
+      "reason": "Student correctly states that the thinking block disappears and output starts directly with the answer, and that the prefill triggers thinking.",
+      "score": 1.0
+    },
+    "P1.Q2": {
+      "label": "incorrect",
+      "reason": "The answer attributes the model's behavior to misunderstanding the instruction and omits the key point that generation stops due to a stop token from the chat template.",
+      "score": 0.0
+    },
+    "P2.Q1": {
+      "label": "partial",
+      "reason": "The answer affirms that the model still knows the name but omits the explanation that the fact remains in the first user message and that the model only sees what is in the messages.",
+      "score": 0.5
+    },
+    "P2.Q2": {
+      "label": "partial",
+      "reason": "The answer correctly identifies Anna but omits the explicit point that the model has no memory and trusts the fabricated conversation history.",
+      "score": 0.5
+    },
+    "P2.Q3": {
+      "label": "missing",
+      "reason": "no answer tagged for this question",
+      "score": 0.0
+    },
+    "P3.Q1": {
+      "label": "correct",
+      "reason": "Student correctly states that without a description the model will not call the tool, recognizing the description as the routing signal.",
+      "score": 1.0
+    },
+    "P3.Q2": {
+      "label": "incorrect",
+      "reason": "The answer claims the model uses a calculator tool, missing the core point that the model decides whether to call a tool and often answers directly for trivial math.",
+      "score": 0.0
+    },
+    "P3.Q3": {
+      "label": "partial",
+      "reason": "Student mentions a KeyError but omits the specific error message, the line where it occurs, and the reason about name mismatch.",
+      "score": 0.5
+    },
+    "P4.Q1": {
+      "label": "missing",
+      "reason": "no answer tagged for this question",
+      "score": 0.0
+    },
+    "P4.Q2": {
+      "label": "correct",
+      "reason": "The student correctly identified that two sequential calls is a valid approach, which matches the rubric's acceptance of either option.",
+      "score": 1.0
+    },
+    "P4.Q3": {
+      "label": "correct",
+      "reason": "The student correctly states the model tells a joke and does not use any tool, matching the core point that tool_calls is empty.",
+      "score": 1.0
+    }
+  }
+}
