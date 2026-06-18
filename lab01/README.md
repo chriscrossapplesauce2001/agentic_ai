@@ -67,10 +67,13 @@ Then open the `.ipynb` files with:
 | LLM basics | `exercise0/exercise0.ipynb` | Gentle on-ramp: what an LLM is, tokens, Ollama, the chat call, sampling (ungraded) |
 | Getting to know Ollama | `exercise1/exercise1.ipynb` | Understand raw `ollama.chat()`: without tools, with history, with tools, manual tool roundtrip |
 | ReAct agent by hand (Ollama SDK) | `exercise2/exercise2.ipynb` | Implement the ReAct loop as a `run_agent()` function (4 TODOs) |
-| ReAct agent with LangChain | `exercise3/exercise3.ipynb` | Build the same agent with LangChain/LangGraph |
+| ReAct agent with LangChain | `exercise3/exercise3.ipynb` | Build the same agent with `create_agent`, then watch the same loop run |
 
-## Test
+Work through them in order: each notebook ends by pointing to the next. Exercise 0 is an
+ungraded warm-up; exercises 1-3 build on each other.
 
-```bash
-uv run pytest test_agent.py -v
-```
+## Check your work
+
+There is no separate test script. Each notebook is self-checking: run all cells top to bottom.
+For exercises 2 and 3, the three test cells at the end should produce sensible answers (a
+calculator result, the formulas from `sample.txt`, and a web-search answer with sources).

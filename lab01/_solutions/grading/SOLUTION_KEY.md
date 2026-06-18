@@ -4,6 +4,40 @@
 
 ---
 
+## Exercise 0 — LLM Basics (ungraded)
+
+No scoring, no answer tags. Instructor reference for helping in the lab: what each demo should show, and what to say when a student's output deviates.
+
+### Expected demo outcomes
+
+**Part 1 — What is an LLM**
+- Continuation demo: a plausible completion (typically steel, aluminum + one more).
+- Hallucination demo (fake 2018 crankset paper): usually a fully formatted invented citation; occasionally the model admits it does not know. Both outcomes are discussed in the notebook prose; neither is a malfunction.
+
+**Part 2 — Tokens**
+- Letter count: 'e' appears **4×** in "Geschwindigkeitsbegrenzung". The model often gets it right by spelling the word out in its thinking; the teaching point is *why* the task is hard (tokens hide letters), not the failure itself.
+- Token counts: output count is ~10× larger than the visible two-sentence answer (hidden thinking tokens). Input count can *shrink* on rerun (server-side prompt cache); this is anticipated in the prose.
+
+**Part 3 — Ollama**
+- `ollama.list()` must include `qwen3.5:4b`; the other models on the Spark belong to other course parts (incl. the grading judge).
+- Self-identification Try-it: qwen3.5:4b usually answers correctly (Qwen, Alibaba). The point survives either way: the answer is generated from training data, not introspected.
+
+**Part 4 — chat() anatomy**
+- Vague prompt ("Tell me about beams") rambles across domains; the precise prompt returns three clean bullets.
+- System-message demo: one-sentence answer; `response.message.thinking` is populated (needed by the inspection cell that follows).
+- Try-it (system "always German" vs. user "answer in English"): no guaranteed winner, varies run to run. That is the point (both are just text; preview of prompt injection).
+
+**Part 5 — Sampling**
+- Default temperature: three different robot names. Temperature 0: three identical names.
+- If temperature 0 still differs occasionally: GPU batching with other students' concurrent requests can flip a close token. The notebook prose covers this; it is not a bug.
+
+### Operational notes
+
+- The hallucination demo and both Part 5 loops pass `think=False`. Without it, qwen3.5:4b's thinking mode can spiral past 300 s on uncertainty or constraint-heavy prompts (measured: 117 s for "exactly one sentence with one concrete number"). Do not "simplify" these cells by removing the flag.
+- The system prompt in Part 4 is deliberately soft ("one short sentence"). Adding hard constraints re-triggers the thinking spiral.
+
+---
+
 ## Exercise 1 — How an LLM API Call Works (free text, LLM-graded)
 
 ### Part 1: A Single LLM Call
@@ -87,4 +121,4 @@ messages.append({"role": "tool", "content": result})
 
 ## Exercise 3 — LangChain
 
-**Open:** `exercise2.ipynb` does not exist yet. Rubric follows once it is built. Core: the same agent via `create_react_agent()` + `@tool` functions, functionally identical to Exercise 1, with noticeably less code.
+**Open:** `exercise3.ipynb` does not exist yet. Rubric follows once it is built. Core: the same agent via `create_react_agent()` + `@tool` functions, functionally identical to Exercise 2, with noticeably less code.
