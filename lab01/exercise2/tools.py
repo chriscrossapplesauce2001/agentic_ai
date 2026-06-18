@@ -2,7 +2,9 @@ import os
 import math
 import numexpr
 from ddgs import DDGS
-from config import SEARCH_MAX_RESULTS
+
+# How many web-search results to return per query.
+SEARCH_MAX_RESULTS = 5
 
 
 # --- Tool 1: Web Search ---
