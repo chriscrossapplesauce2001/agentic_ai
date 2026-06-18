@@ -17,10 +17,8 @@ work lives under `_superseded/` (see below).
 
 | Path | Purpose |
 |---|---|
-| **lab01/** | Lab 1 — ReAct agents with Ollama. Student-facing notebooks `exercise0`–`exercise3` (exercise0 = LLM basics on-ramp; exercise1 = raw `ollama.chat()`; exercise2 = ReAct by hand; exercise3 = LangChain), setup in `lab01/README.md`. Uses `uv` for env management (`uv sync`). Student model: `qwen3.5:4b`. The internal answer key + auto-grader live in `lab01/_solutions/`. |
-| **materials/** | Course documents provided by the module lead (Modulbeschreibung, Lehreinheiten, Labor catalog). |
-| **infra/** | Deployment runbook: `jupyterhub.md` — TLJH + nbgitpuller + cloudflared serving the lab notebooks to students on the Spark. |
-| **literature/** | Curated Agentic AI literature review (sources, navigation table, German summaries). |
+| **lab01/** | Lab 1 — ReAct agents with Ollama. Student-facing notebooks `exercise0`–`exercise3` (exercise0 = LLM basics on-ramp; exercise1 = raw `ollama.chat()`; exercise2 = ReAct by hand; exercise3 = LangChain), setup in `lab01/README.md`. Uses `uv` for env management (`uv sync`). Student model: `qwen3.5:4b`. The internal answer key + auto-grader (+ a grading demo) live in `lab01/_solutions/`. **The only folder students touch.** |
+| **instructor/** | Everything not student-facing, grouped here: `instructor/materials/` (module lead's documents), `instructor/infra/` (JupyterHub deployment runbook: TLJH + nbgitpuller + cloudflared), `instructor/literature/` (curated Agentic AI literature review). |
 | **_superseded/** | Earlier exploratory phase, kept for reference, not part of the current lab. |
 | `notizen.md` | Working notes and meeting minutes (German). |
 | `README.md` | Top-level orientation (English). |

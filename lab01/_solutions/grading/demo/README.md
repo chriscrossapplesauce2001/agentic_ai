@@ -14,10 +14,12 @@ deliberately different quality. Internal — shows that the grading pipeline wor
 ## Reproduce
 
 ```bash
-python3 demo/_make_submissions.py          # (re)generate the three notebooks
 cd lab01
+python3 _solutions/grading/demo/_make_submissions.py   # (re)generate the three notebooks
 uv run python _solutions/grading/grade.py \
-    ../demo/student_a_ex1.ipynb ../demo/student_b_ex1.ipynb ../demo/student_c_ex1.ipynb
+    _solutions/grading/demo/student_a_ex1.ipynb \
+    _solutions/grading/demo/student_b_ex1.ipynb \
+    _solutions/grading/demo/student_c_ex1.ipynb
 ```
 
 ## Last run (judge: `nemotron-3-super:latest`, 11-point scale)

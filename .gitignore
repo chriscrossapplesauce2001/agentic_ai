@@ -22,9 +22,9 @@ Thumbs.db
 # Jupyter
 .ipynb_checkpoints/
 
-# Generated grader reports (keep the committed demo outputs under demo/)
+# Generated grader reports (keep the committed demo outputs under the grading demo/)
 *.grade.json
-!demo/*.grade.json
+!lab01/_solutions/grading/demo/*.grade.json
 
 # Collected student submissions (instructor-only, produced by collect_and_grade.py)
 submissions/
