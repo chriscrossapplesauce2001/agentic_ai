@@ -28,7 +28,28 @@ import os
 import re
 import sys
 
+
+def _load_dotenv():
+    """Load KEY=VALUE lines from ./.env (if present) without overriding real env vars."""
+    try:
+        with open(".env", encoding="utf-8") as f:
+            for ln in f:
+                ln = ln.strip()
+                if ln and not ln.startswith("#") and "=" in ln:
+                    k, v = ln.split("=", 1)
+                    os.environ.setdefault(k.strip(), v.strip())
+    except OSError:
+        pass
+
+
+_load_dotenv()
+
 JUDGE_MODEL = os.environ.get("JUDGE_MODEL", "nemotron-3-super:latest")  # override with any model pulled on the Spark
+# Set JUDGE_BASE_URL (+ JUDGE_API_KEY) to judge via an OpenAI-compatible endpoint instead of
+# local Ollama, e.g. JUDGE_BASE_URL=https://<your-gateway> JUDGE_MODEL=openai/gpt-oss-120b.
+# Both can live in lab01/.env (gitignored).
+JUDGE_BASE_URL = os.environ.get("JUDGE_BASE_URL", "").rstrip("/")
+JUDGE_API_KEY = os.environ.get("JUDGE_API_KEY", "")
 RUBRIC_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "rubric.json")
 TAG_RE = re.compile(r"\bP(\d+)\.Q(\d+)\s*:", re.IGNORECASE)
 
@@ -84,6 +105,38 @@ def extract_answers(cells):
     return answers
 
 
+def _chat_json(messages):
+    """One judge call; returns the model's content string (expected to be JSON).
+
+    Remote OpenAI-compatible endpoint if JUDGE_BASE_URL is set, local Ollama otherwise.
+    """
+    if JUDGE_BASE_URL:
+        import urllib.request
+        req = urllib.request.Request(
+            JUDGE_BASE_URL + "/v1/chat/completions",
+            data=json.dumps({
+                "model": JUDGE_MODEL,
+                "messages": messages,
+                "temperature": 0,
+                "response_format": {"type": "json_object"},
+            }).encode(),
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {JUDGE_API_KEY}",
+            },
+        )
+        with urllib.request.urlopen(req, timeout=180) as r:
+            return json.load(r)["choices"][0]["message"]["content"]
+    import ollama
+    resp = ollama.chat(
+        model=JUDGE_MODEL,
+        messages=messages,
+        format="json",
+        options={"temperature": 0, "num_ctx": 8192},
+    )
+    return resp["message"]["content"]
+
+
 def judge(qid, spec, answer):
     if not answer:
         return {"label": "missing", "reason": "no answer tagged for this question"}
@@ -100,18 +153,14 @@ def judge(qid, spec, answer):
         + "\n".join(rubric_lines)
         + f"\n\nStudent answer:\n\"\"\"\n{answer}\n\"\"\"\n"
     )
-    import ollama
-    resp = ollama.chat(
-        model=JUDGE_MODEL,
-        messages=[{"role": "system", "content": JUDGE_SYSTEM}, {"role": "user", "content": user}],
-        format="json",
-        options={"temperature": 0, "num_ctx": 8192},
-    )
     try:
-        out = json.loads(resp["message"]["content"])
+        content = _chat_json(
+            [{"role": "system", "content": JUDGE_SYSTEM}, {"role": "user", "content": user}]
+        )
+        out = json.loads(content)
         return {"label": str(out.get("label", "error")).lower(), "reason": out.get("reason", "")}
-    except (json.JSONDecodeError, KeyError) as exc:
-        return {"label": "error", "reason": f"judge returned unparseable output: {exc}"}
+    except Exception as exc:
+        return {"label": "error", "reason": f"judge call failed or returned unparseable output: {exc}"}
 
 
 def grade_freetext(cells, rubric, dry_run):
@@ -182,7 +231,8 @@ def main(argv):
     with open(RUBRIC_PATH, encoding="utf-8") as f:
         rubric = json.load(f)
     if not dry_run:
-        print(f"Judge model: {JUDGE_MODEL}  (override with JUDGE_MODEL=...)")
+        where = JUDGE_BASE_URL or "local ollama"
+        print(f"Judge model: {JUDGE_MODEL} @ {where}  (override with JUDGE_MODEL=... / JUDGE_BASE_URL=...)")
     for path in paths:
         cells = notebook_cells_text(path)
         is_code = is_code_exercise(cells)
