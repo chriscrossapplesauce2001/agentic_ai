@@ -18,6 +18,9 @@ import sys
 
 SPARK = os.environ.get("SPARK", "agentsmith@gx10-489a")
 DEST = os.environ.get("DEST", os.path.join(os.getcwd(), "lab01_submissions"))
+# accept-new: trust the Spark's host key on first contact instead of hanging on the
+# interactive "trust this host?" prompt (safe inside the tailnet)
+SSH_OPTS = ["-o", "StrictHostKeyChecking=accept-new"]
 COLLECT = "sudo python3 cwilsch/agentic_ai/instructor/infra/collect_submissions.py"
 LATEST = "ls -1d lab01_submissions/*/ | sort | tail -1"
 
@@ -29,12 +32,12 @@ def run(cmd, **kw):
 
 def main():
     if "--no-run" in sys.argv[1:]:
-        out = run(["ssh", SPARK, LATEST], capture_output=True, text=True).stdout
+        out = run(["ssh", *SSH_OPTS, SPARK, LATEST], capture_output=True, text=True).stdout
         snapshot = out.strip().rstrip("/")
         if not snapshot:
             sys.exit("No snapshots found on the Spark.")
     else:
-        proc = run(["ssh", SPARK, COLLECT], capture_output=True, text=True)
+        proc = run(["ssh", *SSH_OPTS, SPARK, COLLECT], capture_output=True, text=True)
         print(proc.stdout)
         m = re.search(r"Snapshot -> (\S+)", proc.stdout)
         if not m:
@@ -43,7 +46,7 @@ def main():
 
     local = os.path.join(DEST, os.path.basename(snapshot))
     os.makedirs(DEST, exist_ok=True)
-    run(["scp", "-r", "-q", f"{SPARK}:{snapshot}", local])
+    run(["scp", *SSH_OPTS, "-r", "-q", f"{SPARK}:{snapshot}", local])
     print(f"\nDownloaded -> {local}")
     manifest = os.path.join(local, "manifest.csv")
     if os.path.isfile(manifest):
