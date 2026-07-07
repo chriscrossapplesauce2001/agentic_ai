@@ -149,14 +149,27 @@ sudo systemctl enable --now cloudflared-lab
 sudo journalctl -u cloudflared-lab -n 30 --no-pager   # extract the trycloudflare.com URL
 ```
 
-> ⚠️ The hostname **changes every time `cloudflared-lab` restarts**. For a stable semester-long URL, upgrade to a named tunnel + DNS later (`cloudflared tunnel create lab`). The rest of this setup stays unchanged.
+> ⚠️ The hostname **changes every time `cloudflared-lab` restarts**. For a stable semester-long URL see [Stable URL without paying](#stable-url-without-paying) below — Tailscale Funnel gives a permanent hostname for free; a named Cloudflare tunnel needs a paid domain.
 
-## Step 6 — Build and share the student link
+## Step 6 — Build and share the student links
 
-Replace `<random>` with the hostname from `journalctl`. Hand students this single URL:
+Don't hand-write these. Run the generator with the public hostname from `journalctl` (or your
+Funnel/ngrok host) and it prints one ready-to-share link per exercise:
+
+```bash
+python3 instructor/infra/make_links.py <random>.trycloudflare.com
+```
+
+It reads the exercise list straight from the repo, so the links always match what's checked in.
+Sanity-check it any time with `python3 instructor/infra/make_links.py --check` (exit 0 = every
+link points at a notebook that exists).
+
+A single exercise0 link is enough to onboard students — one click clones the whole repo, and the
+notebooks chain to each other. The per-exercise links are just convenient deep-links (e.g. "open
+exercise2 directly"). One exercise0 link looks like:
 
 ```
-https://<random>.trycloudflare.com/hub/user-redirect/git-pull?repo=https://github.com/chriscrossapplesauce2001/agentic_ai&branch=master&urlpath=lab/tree/agentic_ai/lab01/exercise0/exercise0.ipynb
+https://<random>.trycloudflare.com/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Fchriscrossapplesauce2001%2Fagentic_ai&branch=master&urlpath=lab%2Ftree%2Fagentic_ai%2Flab01%2Fexercise0%2Fexercise0.ipynb
 ```
 
 First click per student:
@@ -165,6 +178,78 @@ First click per student:
 3. JupyterLab opens directly on `exercise0.ipynb`.
 
 Subsequent clicks merge upstream notebook changes into their working copy without overwriting their edits — push to `master` mid-semester and the next click pulls the update.
+
+## Stable URL without paying
+
+The quick tunnel from Step 5 works but its hostname changes on every restart. A *named*
+Cloudflare tunnel fixes that, but it requires a domain in a Cloudflare zone, and a domain
+costs money (Cloudflare Registrar ~$10/yr; there is no free Cloudflare domain). Two ways to
+get a **stable, public, free** URL for a Spark that has no public IP:
+
+### Option A — Tailscale Funnel (recommended, free)
+
+Free for personal use. Gives a permanent `https://<machine>.<tailnet>.ts.net` hostname with no
+domain to buy. Replaces `cloudflared` entirely.
+
+```bash
+curl -fsSL https://tailscale.com/install.sh | sh
+sudo tailscale up                       # log in (browser link printed on the Spark)
+# one-time, in the Tailscale admin console: enable MagicDNS, HTTPS certs, and Funnel (all free)
+sudo tailscale funnel --bg 80           # serve local :80 publicly, persist across reboots
+sudo tailscale funnel status            # prints the stable https://<machine>.<tailnet>.ts.net URL
+```
+
+That `.ts.net` hostname never changes. Disable the quick tunnel — Funnel replaces it:
+`sudo systemctl disable --now cloudflared-lab`. Student link becomes:
+
+```
+https://<machine>.<tailnet>.ts.net/hub/user-redirect/git-pull?repo=https://github.com/chriscrossapplesauce2001/agentic_ai&branch=master&urlpath=lab/tree/agentic_ai/lab01/exercise0/exercise0.ipynb
+```
+
+Caveats: Funnel exposes only ports 443/8443/10000 publicly (443 is the default, fine here), and
+the tailnet admin must flip on Funnel + HTTPS once (both free). WebSockets — which JupyterLab
+needs — pass through.
+
+### Option B — ngrok free static domain
+
+The ngrok free plan includes **one** reserved domain (`<name>.ngrok-free.app`), stable across
+restarts.
+
+```bash
+ngrok config add-authtoken <token>      # from the free ngrok dashboard
+# claim your one free static domain in the dashboard, then:
+ngrok http 80 --domain=<name>.ngrok-free.app
+```
+
+Wrap it in a systemd unit like `cloudflared-lab` for persistence. Caveat: free ngrok shows a
+one-time browser interstitial ("You are about to visit…") students must click through, plus
+rate limits — fine for ≤15 intermittent users, but rougher than Funnel.
+
+### If you ever do get a domain — named Cloudflare tunnel
+
+Keeps the existing `cloudflared` install; swaps the quick tunnel for a permanent hostname.
+
+```bash
+cloudflared tunnel login                          # browser auth → ~/.cloudflared/cert.pem
+cloudflared tunnel create lab                      # → ~/.cloudflared/<UUID>.json credentials
+cloudflared tunnel route dns lab lab.example.com   # stable CNAME in your Cloudflare zone
+```
+
+Config `/etc/cloudflared/config.yml`:
+
+```yaml
+tunnel: lab
+credentials-file: /etc/cloudflared/<UUID>.json
+ingress:
+  - hostname: lab.example.com
+    service: http://localhost:80
+  - service: http_status:404
+```
+
+Change the `cloudflared-lab.service` `ExecStart` to
+`cloudflared tunnel --config /etc/cloudflared/config.yml run lab` and drop `User=nobody` (it
+can't read the credentials in `/etc/cloudflared/`). `sudo cloudflared service install` will
+generate the unit from the config for you.
 
 ## Verification
 
@@ -202,6 +287,29 @@ Other common operations:
 | Remove a user completely | `sudo userdel -r jupyter-alice` then remove the row from `/opt/tljh/state/jupyterhub.sqlite` (or `sudo /opt/tljh/hub/bin/jupyterhub --remove-user alice` depending on version) |
 | See current config | `sudo tljh-config show` |
 
+## Collecting student notebooks
+
+Students never submit; their work sits in `/home/jupyter-<name>/agentic_ai/lab01/`. Snapshot it
+(sudo required, home dirs are mode 750):
+
+```bash
+sudo python3 instructor/infra/collect_submissions.py
+```
+
+Writes `~/lab01_submissions/<timestamp>/<student>/exercise{0..3}.ipynb` plus a `manifest.csv`.
+Per notebook the manifest says `ok`, `unchanged` (byte-identical to a committed template, i.e.
+the student never saved work there), `invalid` (corrupt JSON, e.g. a bad merge), `MISSING`, or
+`symlink` (skipped). An `extra_notebooks` column lists stray student `.ipynb` files (renamed
+copies, nbgitpuller conflict-renames like `exercise2__<timestamp>.ipynb`) so misplaced work is
+spotted rather than silently lost. Anything but `ok` needs a look before the deadline passes.
+Each run is a fresh timestamped snapshot, so it is safe to run repeatedly. To automate during the lab, add a root cron entry, e.g. hourly:
+
+```bash
+echo '0 * * * * root python3 /home/agentsmith/cwilsch/agentic_ai/instructor/infra/collect_submissions.py' | sudo tee /etc/cron.d/lab01-collect
+```
+
+Grading the snapshots is a separate, currently postponed step (`lab01/_solutions/grading/`).
+
 ## Day-to-day ops
 
 - **Pushing notebook updates:** push to `master` on GitHub. Students' next click of the magic link auto-merges; their answers in modified cells are preserved (three-way merge).
@@ -219,5 +327,5 @@ Other common operations:
 ## Out of scope
 
 - **nbgrader** for auto-grading — easy to add on top of TLJH later, not needed for exploratory exercises like `exercise0`.
-- **Named Cloudflare tunnel + custom domain** — defer until quick tunnel proves the concept.
+- **Named Cloudflare tunnel + custom domain** — needs a paid domain; for a free stable URL use Tailscale Funnel instead (see [Stable URL without paying](#stable-url-without-paying)).
 - **Per-user GPU quota** — TLJH has memory limits but no native GPU partitioning; with ≤15 students and Ollama batching, not needed.

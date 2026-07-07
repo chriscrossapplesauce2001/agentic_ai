@@ -44,23 +44,13 @@ uv run python _solutions/grading/grade.py --dry-run submission.ipynb   # extract
 
 Each notebook gets a `*.grade.json` with the labels (`correct / partial / incorrect / missing`). Routing (code vs. free-text) is automatic based on content.
 
-## Collecting all submissions (the robust workflow)
+## Collecting all submissions
 
-Students never "submit": every student works in their own clone in their home dir on the Spark
-(`/home/jupyter-<name>/agentic_ai/...`), delivered by nbgitpuller. At the deadline the instructor
-just harvests those files. No upload, no submit button, no exchange server to fail.
-
-```bash
-cd lab01
-uv run python _solutions/grading/collect_and_grade.py
-```
-
-This copies each student's `exercise1`/`exercise2` notebooks into `submissions/<student>/`, grades
-every one (in its own subprocess, so one bad notebook can't sink the batch), and writes
-`submissions/summary.csv` (per student: exercise1 score/max, exercise2 score/max, or `MISSING`).
-
-- `--dry-run` skips the LLM (still scores the deterministic code exercise) for a fast sanity pass.
-- Env overrides: `HOMES` (default `/home/jupyter-*`), `OUT` (default `./submissions`).
+> **Moved.** Harvesting is now separate from grading: use
+> `sudo python3 instructor/infra/collect_submissions.py` (see the section in
+> `instructor/infra/jupyterhub.md`). It snapshots every student's notebooks plus a
+> `manifest.csv`. Grading the harvested notebooks with `grade.py` /
+> `collect_and_grade.py` is **postponed** and not part of the current workflow.
 
 Students only have to **save** their notebook (Jupyter autosaves) and not rename/move it. The
 answer-tagging stubs keep their answers in a predictable place.
