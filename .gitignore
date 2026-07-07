@@ -34,3 +34,6 @@ submissions/
 
 # Playwright
 .playwright-mcp/
+
+# CAU RZ server access docs (internal IPs/credentials info; repo is public, never commit)
+kiservercau/

@@ -787,3 +787,13 @@ notebook feedback
 - arebiten alle in einem eigenen notebook?
 - lernplan
 - wie geht das hupiter ding
+
+
+https://received-postage-rarely-format.trycloudflare.com/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Fchriscrossapplesauce2001%2Fagentic_ai&branch=master&urlpath=lab%2Ftree%2Fagentic_ai%2Flab01%2Fexercise0%2Fexercise0.ipynb
+
+23.06.2026
+- h100 und spark andreas speck
+- beschreibung
+- luke fragen
+- dashboard
+- pipeline robust
