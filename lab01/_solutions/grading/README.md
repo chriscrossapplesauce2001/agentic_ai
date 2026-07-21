@@ -13,6 +13,11 @@ Grades a submitted Lab 01 notebook against the reference solution:
 | `SOLUTION_KEY.md` | Human-readable rubric (`✓ / ± / ✗`) |
 | `rubric.json` | Machine-readable rubric that `grade.py` reads |
 | `grade.py` | The grader (stdlib + `ollama` only) |
+| `collect_and_grade.py` | Harvest every student's notebooks + grade them (writes `submissions/<student>/*.grade.json`) |
+| `build_gradebook.py` | Build one self-contained `gradebook_<lab>.html` (sortable table, click a row for the per-question reasons) |
+| `publish_grades.py` | Hand each student their grade back as `~/graded_<lab>.ipynb` (+ an appeal cell) |
+| `read_appeals.py` | Collect the appeals students wrote back, for a human to review |
+| `grading_console.ipynb` | Buttons for all of the above, with live streaming output (no terminal) |
 
 ## Submission convention
 
@@ -54,6 +59,85 @@ Each notebook gets a `*.grade.json` with the labels (`correct / partial / incorr
 
 Students only have to **save** their notebook (Jupyter autosaves) and not rename/move it. The
 answer-tagging stubs keep their answers in a predictable place.
+
+## Weekly loop (one lab per week)
+
+Four commands, run on the Spark from `lab01/`. Nothing writes to a student's home until
+step 3, and even then it never overwrites an appeal.
+
+```bash
+cd lab01
+
+# 1. COLLECT + GRADE  -> submissions/<student>/*.grade.json + submissions/summary.csv
+uv run python _solutions/grading/collect_and_grade.py
+
+# 2. PREVIEW what students will get, touching NO home dir (safe, no sudo):
+uv run python _solutions/grading/publish_grades.py --dry-run   # writes ./published_preview/
+
+# 2b. VIEW the whole class at a glance -> gradebook_<lab>.html (sortable, no sudo):
+uv run python _solutions/grading/build_gradebook.py            # open the .html in a browser
+
+# 3. PUBLISH each grade into ~<student>/graded_<lab>.ipynb (homes are mode 750 -> sudo):
+sudo python3 _solutions/grading/publish_grades.py
+
+# 4. Next week, COLLECT APPEALS students wrote back:
+sudo python3 _solutions/grading/read_appeals.py        # -> appeals_<lab>.csv
+```
+
+The student opens `graded_<lab>.ipynb` in their file browser, sees the grade table, and if
+they disagree writes their reason in the `appeal` cell and saves. That is the whole complaint
+channel: no email, no upload. `read_appeals.py` is the only place a human looks.
+
+### Prefer buttons? Use the console notebook
+
+`grading_console.ipynb` gives you the same four steps as **buttons**, and streams each script's
+output **live** into a log so you can watch every student/question as it is graded (look under
+the hood, no terminal):
+
+```bash
+cd lab01
+uv run jupyter notebook _solutions/grading/grading_console.ipynb   # run the one cell -> buttons
+```
+
+The buttons just call the scripts below, so behaviour (dry-run safety, appeal protection,
+manual overrides) is identical. Steps 1/3/4 touch student homes and so use `sudo -n`
+(non-interactive: it never hangs on a prompt). If a button prints *"sudo: a password is
+required"*, either launch the notebook from a session where `sudo` is already authorized, or
+add a one-time NOPASSWD rule (`sudo visudo -f /etc/sudoers.d/grading`), e.g.:
+
+```
+<you> ALL=(root) NOPASSWD: /path/to/lab01/.venv/bin/python3 /path/to/lab01/_solutions/grading/*.py
+```
+
+### Try the whole pipeline on dummy students (Demo mode)
+
+Three fake students live under `demo/homes/` (built by `demo/make_demo_homes.py`):
+
+| student | Exercise 1 | Exercise 2 (code) | expected |
+|---|---|---|---|
+| `perfect` | all answers correct | 4/4 TODOs | ~15/15 |
+| `half` | ~half the answers | 2/4 TODOs | ~8/15 |
+| `weak` | wrong / missing | 0/4 TODOs | 0/15 |
+
+In the console tick **Demo mode**, then use the normal buttons. It grades these instead of
+real students, **with no sudo and no risk** (writes to `demo/submissions/`, gitignored). The
+code exercise is deterministic (4/4, 2/4, 0/4 guaranteed); free-text scores depend on the
+judge model. Regenerate the dummies anytime with `python3 demo/make_demo_homes.py`.
+
+### Testing / manual grading (won't get overwritten)
+
+- **Test the whole thing safely:** `publish_grades.py --dry-run` writes to `./published_preview/`
+  instead of student homes; then `read_appeals.py --from published_preview` reads from there.
+  No student home is ever touched.
+- **Override an AI grade by hand:** put a `<key>.manual.json` (same shape as `<key>.grade.json`)
+  next to it in `submissions/<student>/`. `publish_grades.py` prefers it and labels the row
+  *"reviewed by an instructor."* Re-running `collect_and_grade.py` rewrites only `.grade.json`,
+  so your manual overrides survive.
+- **No accidental clobbering:** re-running `publish_grades.py` skips already-published files
+  (use `--force` to update after a manual fix), and it **never** overwrites a notebook in which
+  the student has filed an appeal, even with `--force`.
+
+A different lab? Set `LAB=lab02` (env var) on steps 2–4 so the filename and heading match.
 
 ## Deliberate design choices
 

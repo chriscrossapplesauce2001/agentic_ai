@@ -31,6 +31,11 @@ HOMES = os.environ.get("HOMES", "/home/jupyter-*")
 OUT = os.environ.get("OUT", os.path.abspath("submissions"))
 HERE = os.path.dirname(os.path.abspath(__file__))
 GRADER = os.path.join(HERE, "grade.py")
+sys.path.insert(0, HERE)
+import gstate  # noqa: E402  (sibling module: run-state stamps)
+
+# grade.py's default judge, mirrored here only so the status panel can show what was used.
+JUDGE_MODEL = os.environ.get("JUDGE_MODEL", "nemotron-3-super:latest")
 
 # Graded notebooks, relative to each student's repo clone. exercise0 (LLM basics) is ungraded.
 TARGETS = {
@@ -90,11 +95,14 @@ def main(argv):
         print(f"  {st:18} " + "  ".join(f"{k}:{'ok' if v else 'MISSING'}" for k, v in found.items()))
 
     print("\nGrading...\n")
+    todo = [(st, key, dst) for st, found in roster for key, dst in found.items() if dst]
+    total = len(todo)
     scores = {}  # (student, key) -> (total, max) or None
-    for st, found in roster:
-        for key, dst in found.items():
-            if dst:
-                scores[(st, key)] = grade_one(dst, dry)
+    # '@PROGRESS done/total' lines let the console draw a progress bar; harmless in a plain run.
+    print(f"@PROGRESS 0/{total}", flush=True)
+    for i, (st, key, dst) in enumerate(todo, 1):
+        scores[(st, key)] = grade_one(dst, dry)
+        print(f"@PROGRESS {i}/{total}", flush=True)
 
     os.makedirs(OUT, exist_ok=True)
     csv_path = os.path.join(OUT, "summary.csv")
@@ -114,6 +122,10 @@ def main(argv):
 
     print(f"\nSummary -> {csv_path}\n")
     print(open(csv_path, encoding="utf-8").read())
+
+    n_graded = sum(1 for v in scores.values() if v)
+    gstate.stamp("graded", model=("dry-run" if dry else JUDGE_MODEL),
+                 students=len(roster), graded=n_graded)
     return 0
 
 

@@ -29,6 +29,12 @@ Thumbs.db
 # Collected student submissions (instructor-only, produced by collect_and_grade.py)
 submissions/
 
+# Other generated grading artifacts (published notebooks, gradebook, appeals, previews)
+gradebook_*.html
+appeals_*.csv
+published_preview/
+graded_*.ipynb
+
 # Claude Code
 .claude/
 
