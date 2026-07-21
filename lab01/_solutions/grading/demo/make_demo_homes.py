@@ -1,23 +1,24 @@
 #!/usr/bin/env python3
-"""Generate dummy student home dirs for testing the whole grading pipeline safely.
+"""Seed dummy students into the live JupyterHub home layout (dev only).
 
-Creates three fake students under demo/homes/ (owned by you, NOT real /home/jupyter-*),
-each with an Exercise 1 (free-text) and Exercise 2 (code) notebook:
+Creates three fake students under /home/jupyter-* so the normal grading buttons pick them
+up exactly like real ones (no special mode). Writing under /home needs root:
 
-    jupyter-perfect  all answers correct   + all 4 code TODOs solved   -> should score high
-    jupyter-half     ~half the answers     + 2 of 4 code TODOs solved  -> should score ~50%
-    jupyter-weak     mostly wrong/missing  + 0 code TODOs solved        -> should score low
+    sudo python3 _solutions/grading/demo/make_demo_homes.py
 
-Run it once:  python3 demo/make_demo_homes.py
-Then in the grading console tick "Demo mode" and use the normal buttons: it grades these
-instead of real students, with no sudo and no risk. (Free-text scores depend on the judge
-model; the code exercise is deterministic, so 4/4, 2/4, 0/4 are guaranteed.)
+Students created (override the target root with HOMES_ROOT=... if needed):
+
+    jupyter-dummy-perfect  all answers correct   + all 4 code TODOs solved   -> ~15/15
+    jupyter-dummy-half     ~half the answers     + 2 of 4 code TODOs solved  -> ~8/15
+    jupyter-dummy-weak     wrong / missing       + 0 code TODOs solved        -> 0/15
+
+The code exercise is deterministic (4/4, 2/4, 0/4 guaranteed); free-text scores depend on
+the judge model. Remove them again with:  sudo rm -rf /home/jupyter-dummy-*
 """
 import json
 import os
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-HOMES = os.path.join(HERE, "homes")
+HOMES_ROOT = os.environ.get("HOMES_ROOT", "/home")
 
 # ---- Exercise 1 correct answers (core points from SOLUTION_KEY.md) ----
 CORRECT = {
@@ -100,20 +101,20 @@ def ex2(todos_done):
     return nb([md("# Exercise 2 - ReAct loop\n"), code(run_agent_code(todos_done))])
 
 def write(user, ex1_nb, ex2_nb):
-    base = os.path.join(HOMES, f"jupyter-{user}", "agentic_ai", "lab01")
+    base = os.path.join(HOMES_ROOT, f"jupyter-{user}", "agentic_ai", "lab01")
     for ex, data in (("exercise1", ex1_nb), ("exercise2", ex2_nb)):
         os.makedirs(os.path.join(base, ex), exist_ok=True)
         json.dump(data, open(os.path.join(base, ex, f"{ex}.ipynb"), "w"), indent=1)
-    print(f"  wrote jupyter-{user}")
+    print(f"  wrote {os.path.join(HOMES_ROOT, 'jupyter-' + user)}")
 
 
 def main():
-    print(f"Generating demo homes under {HOMES}")
-    write("perfect", ex1(CORRECT), ex2(4))
+    print(f"Seeding dummy students under {HOMES_ROOT}/jupyter-dummy-*")
+    write("dummy-perfect", ex1(CORRECT), ex2(4))
     half = {k: v for k, v in CORRECT.items() if k in ("P1.Q1", "P2.Q1", "P2.Q3", "P3.Q3", "P4.Q1", "P4.Q3")}
-    write("half", ex1(half), ex2(2))
-    write("weak", ex1(WRONG), ex2(0))
-    print("Done. In the console tick 'Demo mode' and click the buttons.")
+    write("dummy-half", ex1(half), ex2(2))
+    write("dummy-weak", ex1(WRONG), ex2(0))
+    print("Done. Now click 'Collect + grade' in the console: they show up like real students.")
 
 
 if __name__ == "__main__":

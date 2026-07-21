@@ -109,20 +109,24 @@ add a one-time NOPASSWD rule (`sudo visudo -f /etc/sudoers.d/grading`), e.g.:
 <you> ALL=(root) NOPASSWD: /path/to/lab01/.venv/bin/python3 /path/to/lab01/_solutions/grading/*.py
 ```
 
-### Try the whole pipeline on dummy students (Demo mode)
+### Dummy students for dev testing
 
-Three fake students live under `demo/homes/` (built by `demo/make_demo_homes.py`):
+To try the whole pipeline with real-looking data, seed three fake students into the live
+home layout (dev only, needs root because it writes under `/home`):
+
+```bash
+sudo python3 _solutions/grading/demo/make_demo_homes.py
+```
 
 | student | Exercise 1 | Exercise 2 (code) | expected |
 |---|---|---|---|
-| `perfect` | all answers correct | 4/4 TODOs | ~15/15 |
-| `half` | ~half the answers | 2/4 TODOs | ~8/15 |
-| `weak` | wrong / missing | 0/4 TODOs | 0/15 |
+| `jupyter-dummy-perfect` | all answers correct | 4/4 TODOs | ~15/15 |
+| `jupyter-dummy-half` | ~half the answers | 2/4 TODOs | ~8/15 |
+| `jupyter-dummy-weak` | wrong / missing | 0/4 TODOs | 0/15 |
 
-In the console tick **Demo mode**, then use the normal buttons. It grades these instead of
-real students, **with no sudo and no risk** (writes to `demo/submissions/`, gitignored). The
-code exercise is deterministic (4/4, 2/4, 0/4 guaranteed); free-text scores depend on the
-judge model. Regenerate the dummies anytime with `python3 demo/make_demo_homes.py`.
+They then show up like real students under the normal buttons (code exercise is
+deterministic: 4/4, 2/4, 0/4; free-text scores depend on the judge model). Remove them with
+`sudo rm -rf /home/jupyter-dummy-*`.
 
 ### Testing / manual grading (won't get overwritten)
 
