@@ -797,3 +797,20 @@ https://received-postage-rarely-format.trycloudflare.com/hub/user-redirect/git-p
 - luke fragen
 - dashboard
 - pipeline robust
+
+
+07.07.2026
+output tabelle
+spalten
+name 
+link zum notebook
+automatische review ki
+automatische bewertung das auch jupiterhub sichtbar
+
+prozess, kopie machen engergebnis
+lokales llm agent für jede ababe und bewertet
+bewertung bedeutet neben antwort richtig falsch begründung
+gesamt tabelle
+alles sperren anch bewertung
+bschwerde feld zur bewertung
+gesamt überblick
