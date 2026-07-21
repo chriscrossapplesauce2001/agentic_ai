@@ -88,6 +88,21 @@ The student opens `graded_<lab>.ipynb` in their file browser, sees the grade tab
 they disagree writes their reason in the `appeal` cell and saves. That is the whole complaint
 channel: no email, no upload. `read_appeals.py` is the only place a human looks.
 
+### Prefer a browser? Use the web GUI
+
+Same buttons as the notebook, as a small local web app (stdlib only, no extra deps):
+
+```bash
+cd lab01
+uv run python _solutions/grading/grading_web.py     # -> http://127.0.0.1:8765
+```
+
+It binds to **127.0.0.1 only** (the buttons can run grading with sudo, so it must not be
+exposed). If you are remote, tunnel first: `ssh -L 8765:127.0.0.1:8765 <you>@<spark>`.
+Streams each script's output live, has the judge-model dropdown, progress bar, status panel,
+and a "View gradebook" button that opens the HTML gradebook. Behaviour is identical to the
+console (it calls the same scripts).
+
 ### Prefer buttons? Use the console notebook
 
 `grading_console.ipynb` gives you the same four steps as **buttons**, and streams each script's
